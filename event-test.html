@@ -1,0 +1,34 @@
+<link rel="import" href="../tangere/tangere.html" />
+<link rel="import" href="at-form-text.html" />
+<link rel="import" href="test-form-text.html" />
+
+<dom-module id="event-test">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      .mt {
+        margin-top: 16px;
+      }
+    </style>
+    
+    <at-form-text id="first" class="mt" type="text" placeholder="first input"></at-form-text>
+    <input id="second" class="mt" type="text" placeholder="second input">
+    <test-form-text id="third" class="mt"></test-form-text>
+
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: "event-test",
+    properties: {
+      
+    },
+    ready: function () {
+
+    }
+  });
+</script>
