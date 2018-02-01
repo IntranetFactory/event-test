@@ -164,7 +164,10 @@ at-form-text represents an input type=text element on the form
       valueProvider.addEventListener('change', function(e) {
         e.stopPropagation();
         self.validate();
+        // self.fire('change', { value: e.target.value }, { bubbles: false });
         self.fire('change', { value: e.target.value }, { bubbles: true });
+        // self.dispatchEvent(new Event('change', { bubbles: false }));
+        // self.dispatchEvent(new Event('change', { bubbles: true }));
         // self.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
       });
 
