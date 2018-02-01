@@ -12,9 +12,9 @@
   },
   "version": "0.1.0.0",
   "resolutions": {
-    "polymer": "1.11.2",
-    "webcomponentsjs": "0.7.24",
-    "iron-label": "1.0.2",
+    "polymer": "2.4.0",
+    "webcomponentsjs": "1.1.0",
+    "iron-label": "2.0.0",
     "paper-styles": "master",
     "iron-flex-layout": "master",
     "iron-selector": "master",
