@@ -2,13 +2,13 @@
   "name": "event-test",
   "private": true,
   "dependencies": {
-    "webcomponentsjs": "webcomponents/webcomponentsjs#0.7.24",
-    "polymer": "polymer/polymer#1.11.2",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#1.1.0",
+    "polymer": "polymer/polymer#2.4.0",
     "tangere": "TangereJs/tangere#master",
     "at-theme": "TangereJs/at-theme#master",
     "at-i18n": "TangereJs/at-i18n#master",
     "at-form-behaviors": "TangereJs/at-form-behaviors#master",
-    "iron-label": "PolymerElements/iron-label#1.0.2"
+    "iron-label": "PolymerElements/iron-label#2.0.0"
   },
   "version": "0.1.0.0",
   "resolutions": {
