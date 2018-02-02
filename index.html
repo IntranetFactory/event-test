@@ -154,7 +154,8 @@
       });
 
       c.addEventListener('click', function(e) {
-        log("click: " + e.srcElement.id);
+        var id = e.srcElement ? e.srcElement.id : e.target.id;
+        log("click: " + id);
       });
 
     });
