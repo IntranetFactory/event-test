@@ -16,9 +16,29 @@
       }
     </style>
     
-    <event-source id="level1EventSource" class="mt"></event-source>
-    <event-source-lv2 id="level2EventSource" class="mt"></event-source-lv2>
-    <event-source-lv3 id="level3EventSource" class="mt"></event-source-lv3>
+    <event-source 
+      class="mt" 
+      id="level1EventSource" 
+      label="Event source lv1"
+      placeholder="type to trigger change event on level 1"
+      dispatch-method="dispatchMethod"
+    ></event-source>
+
+    <event-source-lv2 
+      class="mt"
+      id="level2EventSource" 
+      label="Event source lv1"
+      placeholder="type to trigger change event on level 1"
+      dispatch-method="dispatchMethod"
+    ></event-source-lv2>
+
+    <event-source-lv3 
+      class="mt"
+      id="level3EventSource"
+      label="Event source lv1"
+      placeholder="type to trigger change event on level 1"
+      dispatch-method="dispatchMethod"
+    ></event-source-lv3>
 
   </template>
 </dom-module>
@@ -26,6 +46,11 @@
   Polymer({
     is: "event-test",
     properties: {
+
+      dispatchMethod: {
+        type:String,
+        value: ''
+      }
       
     },
     ready: function () {
