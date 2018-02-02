@@ -107,7 +107,25 @@
             this.dispatchEvent(event);
           
           } else {
-            this.dispatchEvent(new CustomEvent('change', { bubbles: false, detail: { value: e.target.value } }));
+            this.dispatchEvent(new CustomEvent('change', { 
+              bubbles: false, 
+              detail: { value: e.target.value } 
+            }));
+          }
+        
+        } else if (dm === "dispatch_composed") {
+          if (!this.shadowRoot || shadowType === "v0") {
+            // custom event doesn't work in shadywDOM
+            var event = new Event('change', { bubbles: false, composed: true });
+            event.detail = { value: e.target.value };
+            this.dispatchEvent(event);
+          
+          } else {
+            this.dispatchEvent(new CustomEvent('change', { 
+              bubbles: false, 
+              composed: true, 
+              detail: { value: e.target.value } 
+            }));
           }
           
         } else if (dm === "dispatch_bubbling") {
@@ -118,10 +136,13 @@
             this.dispatchEvent(event);
           
           } else {
-            this.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { value: e.target.value } }));
+            this.dispatchEvent(new CustomEvent('change', { 
+              bubbles: true, 
+              detail: { value: e.target.value } 
+            }));
           }
 
-        } else if (dm === "dispatch_composed") {
+        } else if (dm === "dispatch_bubbling_composed") {
           if (!this.shadowRoot || shadowType === "v0") {
             // custom event doesn't work in shadywDOM
             var event = new Event('change', { bubbles: true, composed: true });
@@ -129,7 +150,11 @@
             this.dispatchEvent(event);
           
           } else {
-            this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { value: e.target.value } }));
+            this.dispatchEvent(new CustomEvent('change', { 
+              bubbles: true, 
+              composed: true, 
+              detail: { value: e.target.value } 
+            }));
           }
         }
 

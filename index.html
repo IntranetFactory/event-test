@@ -59,11 +59,15 @@
       <label for="method4">.dispatchEvent(new CustomEvent('change', { ... }, { bubbles: false }))</label>
     </div>
     <div>
+      <input id="method4" type="radio" name="dispatchmethod" value="dispatch_composed" />
+      <label for="method4">.dispatchEvent(new CustomEvent('change', { ... }, { bubbles: false, composed: true }))</label>
+    </div>
+    <div>
       <input id="method5" type="radio" name="dispatchmethod" value="dispatch_bubbling" />
       <label for="method5">.dispatchEvent(new CustomEvent('change', { ... }, { bubbles: true }))</label>
     </div>
     <div>
-      <input id="method6" type="radio" name="dispatchmethod" value="dispatch_composed" />
+      <input id="method6" type="radio" name="dispatchmethod" value="dispatch_bubbling_composed" />
       <label for="method6">.dispatchEvent(new CustomEvent('change', { ... }, { bubbles: true, composed: true }))</label>
     </div>
   </fieldset>
