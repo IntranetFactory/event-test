@@ -29,6 +29,10 @@
       display: block;
     }
 
+    .conosle-clear {
+      display: block;
+    }
+
     .console-area {
       width: 100%;
     }
@@ -39,39 +43,59 @@
   <fieldset id="dmContainer">
     <legend>Select event dispatch method</legend>
     <div>
-      <input id="method1" type="radio" name="dispatchmethod" value="change" checked />
+      <input id="method1" type="radio" name="dispatchmethod" value="event" checked />
       <label for="method1">HTMLInput.change event</label>
     </div>
     <div>
       <input id="method2" type="radio" name="dispatchmethod" value="fire" />
-      <label for="method2">Polymer.base.fire('change', { ... }, { bubbles: false })</label>
+      <label for="method2">Polymer.Base.fire('change', { ... }, { bubbles: false })</label>
     </div>
     <div>
       <input id="method3" type="radio" name="dispatchmethod" value="fire_bubbling" />
-      <label for="method3">Polymer.base.fire('change', { ... }, { bubbles: true })</label>
+      <label for="method3">Polymer.Base.fire('change', { ... }, { bubbles: true })</label>
     </div>
     <div>
       <input id="method4" type="radio" name="dispatchmethod" value="dispatch" />
-      <label for="method4">Polymer.base.fire('change', { ... }, { bubbles: false })</label>
+      <label for="method4">.dispatchEvent(new CustomEvent('change', { ... }, { bubbles: false }))</label>
     </div>
     <div>
       <input id="method5" type="radio" name="dispatchmethod" value="dispatch_bubbling" />
-      <label for="method5">Polymer.base.fire('change', { ... }, { bubbles: true })</label>
+      <label for="method5">.dispatchEvent(new CustomEvent('change', { ... }, { bubbles: true }))</label>
     </div>
     <div>
       <input id="method6" type="radio" name="dispatchmethod" value="dispatch_composed" />
-      <label for="method6">Polymer.base.fire('change', { ... }, { bubbles: true, composed: true })</label>
+      <label for="method6">.dispatchEvent(new CustomEvent('change', { ... }, { bubbles: true, composed: true }))</label>
     </div>
   </fieldset>
 
   <div class="horizontal-layout mt">
     <div id="container" class="column">
-      <event-test id="eventTest"></event-test>
+      <event-source 
+        id="depth1EventSourceContainer" 
+        class="mt" 
+        label="Depth 1 Event source"
+        placeholder="type to trigger change event on depth 1"
+      ></event-source>
+
+      <event-source-lv2 
+        id="depth2EventSourceContainer" 
+        class="mt"
+        label="Depth 2 Event source"
+        placeholder="type to trigger change event on depth 2"
+      ></event-source-lv2>
+
+      <event-source-lv3 
+        id="depth3EventSourceContainer"
+        class="mt"
+        label="Depth 3 Event source"
+        placeholder="type to trigger change event on depth 3"
+      ></event-source-lv3>
     </div>
+
     <div class="column">
       <label for="consoleOutput" class="console-label">Console output:</label>
-      <button id="consoleClear">Clear console</button>
-      <textarea id="consoleOutput" rows="20" class="console-area"></textarea>
+      <button id="consoleClear" class="conosle-clear">Clear console</button>
+      <textarea id="consoleOutput" rows="45" class="console-area"></textarea>
     </div>
   </div>
 
@@ -82,20 +106,26 @@
       consoleOutput.append(text);
       consoleOutput.append("\n");
     }
+    window.logToIndexPage = log;
 
     var consoleClear = document.getElementById('consoleClear');
     consoleClear.addEventListener('click', function() {
-      consoleOutput.value = "";
+      consoleOutput.innerHTML = "";
     });
 
     document.addEventListener('WebComponentsReady', function(e) {
-
-      var eventTest = document.getElementById('eventTest');
-
+      
+      var d1Container = document.getElementById('depth1EventSourceContainer');
+      var d2Container = document.getElementById('depth2EventSourceContainer');
+      var d3Container = document.getElementById('depth3EventSourceContainer');
+      
       var dmContainer = document.getElementById('dmContainer');
       dmContainer.addEventListener('change', function(event) {
         var value = event.target.value;
-        eventTest.dispatchMethod = value;
+        d1Container.dispatchMethod = value;
+        d2Container.dispatchMethod = value;
+        d3Container.dispatchMethod = value;
+
         log('Dispatch method changed to : ' + value);
       });
 
@@ -106,7 +136,16 @@
       });
 
       c.addEventListener('change', function(e) {
-        log("change: " + e.srcElement.id);
+        var data = {
+          targetId: e.target.id,
+          targetType: e.target.is ? e.target.is : e.target.nodeName,
+          srcElementId: e.srcElement.id,
+          srcElementType: e.srcElement.is ? e.srcElement.is : e.srcElement.nodeName
+        };
+
+        var msg = [ "Index page change event handler for ", JSON.stringify(data, null, " ")].join("\n");
+        log(msg);
+        // log("change: " + e.srcElement.id);
       });
 
       c.addEventListener('click', function(e) {

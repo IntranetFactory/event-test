@@ -10,16 +10,12 @@
       }
     </style>
 
-    <div>
-      <label id="label" for="input">{{label}}</label>
-      <input id="input" type="text" placeholder$="{{placeholder}}" />
-    </div>
-
     <event-source-lv2
-      id="eventSrouceLv3"
-      label="Event source level 3"
-      placeholder="type to trigger change event on level 3"
-      dipatch-method="dispatchMethod"
+      id="eventSource_depth3"
+      label="[[label]]"
+      placeholder="[[placeholder]]"
+      value="[[value]]"
+      dispatch-method="[[dispatchMethod]]"
     ></event-source-lv2>
   </template>
 </dom-module>
@@ -41,11 +37,6 @@
         title: 'Placeholder text'
       },
 
-      buttonText: {
-        type: String,
-        value: ''
-      },
-
       value: {
         type: String,
         value: '',
@@ -58,29 +49,30 @@
       }
     },
 
-    ready: function() {
+    listeners: {
+      'click': '_hostClicked',
+      'tap': '_hostTapped',
+      'change': '_hostChange'
+    },
 
-      var self = this;
-      var valueProvider = this.$.input;
+    _hostClicked: function(event) {
+      var msg = [ this.id, "(", this.is, ")", " click handler called." ].join("");
+      console.log(msg);
+      window.logToIndexPage(msg);
+    },
 
-      valueProvider.addEventListener('change', function(e) {
-        e.stopPropagation();
-        // self.fire('change', { value: e.target.value }, { bubbles: false });
-        self.fire('change', { value: e.target.value }, { bubbles: true });
-        // self.dispatchEvent(new Event('change', { bubbles: false }));
-        // self.dispatchEvent(new Event('change', { bubbles: true }));
-        // self.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
-      });
+    _hostTapped: function(event) {
+      var msg = [ this.id, "(", this.is, ")", " tap handler called." ].join("");
+      console.log(msg);
+      window.logToIndexPage(msg);
+    },
 
-      valueProvider.addEventListener('blur', function(e) {
-        e.stopPropagation();
-      });
+    _hostChange: function(event) {
+      var msg = [ this.id, "(", this.is, ")", " change handler called." ].join("");
+      console.log(msg);
+      window.logToIndexPage(msg);
+    },
 
-      valueProvider.addEventListener('keypress', function(event) {
-        if (event.keyCode === 13) {
-          event.preventDefault();
-        }
-      });
-    }
+    ready: function() { }
   });
 </script>
