@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>scope subtree tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="parent-elt.html">
+    <link rel="import" href="child-elt.html">
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
+  </head>
+
+  <body>
+
+    <test-fixture id="tests">
+      <template>
+        <parent-elt></parent-elt>
+      </template>
+    </test-fixture>
+
+    <script>
+
+      function assertStyleScoping(elt, scopeName, isShadowDOM) {
+        if (isShadowDOM) {
+          assert.equal(elt.classList.length, 0);
+          return;
+        }
+
+        assert.equal(elt.classList.length, 2);
+
+        assert.equal(elt.classList.contains('style-scope'), true);
+        assert.equal(elt.classList.contains(scopeName), true);
+
+        if (!elt.is) {
+          // element is not a webcomponent
+          var cNodes = elt.childNodes;
+
+          Array.prototype.forEach.call(cNodes, function(node, index){ 
+            // skip text nodes, comments and rest
+            if (node.nodeType !== 1) return;
+            assertStyleScoping(node, scopeName, isShadowDOM);
+          });
+        
+        } else {
+          // assert that localDOM children do not have scope name added
+          var localDomChildren = Polymer.dom(elt.root).children;
+
+          Array.prototype.forEach.call(localDomChildren, function(node, index){ 
+            // skip text nodes, comments and rest
+            if (node.nodeType !== 1) return;
+            assertStyleScoping(node, elt.is, isShadowDOM);
+          });
+
+          // to inspect lightDOM
+          var lightDomChildren = Polymer.dom(elt).getEffectiveChildNodes();
+
+          Array.prototype.forEach.call(lightDomChildren, function(node, index){ 
+            // skip text nodes, comments and rest
+            if (node.nodeType !== 1) return;
+            assertStyleScoping(node, scopeName, isShadowDOM);
+          });
+        }
+      }
+
+      suite('patched scope subtree tests', function() {
+
+        // single node
+        // node with children
+        // webcomponent as root
+        // webcomponent as child
+
+        test('scope single node without children', function() {
+
+          var testElt = fixture('tests');
+          var elt = document.createElement('div');
+          var isShadowDOM = testElt.shadowRoot ? true : false;
+
+          // assert that class list is empty
+          assert.equal(elt.classList.length, 0);
+
+          testElt.scopeSubtree(elt);
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(elt, 'parent-elt', isShadowDOM);
+
+          // repeating the scoping doesn't multiply the class names
+          testElt.scopeSubtree(elt);          
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(elt, 'parent-elt', isShadowDOM);
+
+        });
+
+        test('scope single node with children', function() {
+
+          var testElt = fixture('tests');
+          var elt = document.createElement('div');
+          elt.innerHTML = '<div>Lorem ipsum <div>Lorem ipsum</div> <div>Lorem ipsum</div></div>';
+
+          var isShadowDOM = testElt.shadowRoot ? true : false;
+
+          // assert that class list is empty
+          assert.equal(elt.classList.length, 0);
+
+          testElt.scopeSubtree(elt);
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(elt, 'parent-elt', isShadowDOM);
+
+          // repeating the scoping doesn't multiply the class names
+          testElt.scopeSubtree(elt);          
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(elt, 'parent-elt', isShadowDOM);
+
+        });
+
+        test('scope webcomponent as root', function() {
+
+          var elt = fixture('tests');
+          var scopeElt = document.createElement('child-elt');
+
+          var isShadowDOM = elt.shadowRoot ? true : false;
+
+          // assert that class list is empty
+          assert.equal(elt.classList.length, 0);
+
+          scopeElt.scopeSubtree(elt);
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(elt, 'child-elt', isShadowDOM);
+
+          // repeating the scoping doesn't multiply the class names
+          scopeElt.scopeSubtree(elt);
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(elt, 'child-elt', isShadowDOM);
+
+        });
+
+        test('scope webcomponent as child', function() {
+
+          var elt = fixture('tests');
+          var scopeElt = document.createElement('child-elt');
+
+          var rootElt = document.createElement('div');
+          rootElt.innerHTML = '<div>Lorem ipsum <div>Lorem ipsum</div> <div>Lorem ipsum</div><parent-elt></parent-elt></div>';
+
+          var isShadowDOM = elt.shadowRoot ? true : false;
+
+          // assert that class list is empty
+          assert.equal(rootElt.classList.length, 0);
+
+          scopeElt.scopeSubtree(rootElt);
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(rootElt, 'child-elt', isShadowDOM);
+
+          // repeating the scoping doesn't multiply the class names
+          scopeElt.scopeSubtree(rootElt);
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(rootElt, 'child-elt', isShadowDOM);
+
+        });
+
+        test('scoping affects lightDOM but not localDOM', function() {
+
+          var elt = fixture('tests');
+          var scopeElt = document.createElement('child-elt');
+
+          var rootElt = document.createElement('div');
+          rootElt.innerHTML = 
+            '<parent-elt>' +
+              '<child-elt></child-elt>' +
+              '<child-elt></child-elt>' +
+              '<child-elt></child-elt>' +
+            '</parent-elt>';
+
+          var isShadowDOM = elt.shadowRoot ? true : false;
+
+          // assert that class list is empty
+          assert.equal(rootElt.classList.length, 0);
+          
+          scopeElt.scopeSubtree(rootElt);
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(rootElt, 'child-elt', isShadowDOM);
+
+          // repeating the scoping doesn't multiply the class names
+          scopeElt.scopeSubtree(elt);
+          // assert that class list contains style-scope and parent-elt
+          assertStyleScoping(rootElt, 'child-elt', isShadowDOM);
+
+        });
+
+      });
+
+    </script>
+
+  </body>
+
+</html>

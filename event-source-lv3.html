@@ -1,7 +1,7 @@
 <link rel="import" href="components/tangere/tangere.html">
 <link rel="import" href="event-source-lv2.html" />
 
-<dom-module id="event-source">
+<dom-module id="event-source-lv3">
   <template>
     <style>
       :host {
@@ -25,7 +25,7 @@
 
 <script>
   Polymer({
-    is: 'event-source',
+    is: 'event-source-lv3',
     properties: {
 
       label: {
@@ -48,7 +48,6 @@
       value: {
         type: String,
         value: '',
-        observer: '_valueChanged',
         title: 'Value'
       }
     },
@@ -60,7 +59,6 @@
 
       valueProvider.addEventListener('change', function(e) {
         e.stopPropagation();
-        self.validate();
         // self.fire('change', { value: e.target.value }, { bubbles: false });
         self.fire('change', { value: e.target.value }, { bubbles: true });
         // self.dispatchEvent(new Event('change', { bubbles: false }));
@@ -70,7 +68,6 @@
 
       valueProvider.addEventListener('blur', function(e) {
         e.stopPropagation();
-        self.validate();
       });
 
       valueProvider.addEventListener('keypress', function(event) {
@@ -78,9 +75,6 @@
           event.preventDefault();
         }
       });
-
-      this._isReady = true;
-      this._internalValidStateUpdate(this.required, this.maxChars);
     }
   });
 </script>

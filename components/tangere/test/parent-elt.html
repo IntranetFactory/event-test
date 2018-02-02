@@ -1,0 +1,42 @@
+<link rel="import" href="../../tangere/tangere.html" />
+<!-- this is a component used in test suite to test if patched scopesubtree function works correctly -->
+<dom-module id="parent-elt">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+    </style>
+      
+    <h4>I am parent elt</h4>
+
+    <div>
+      Lorem ipsum
+      <div>Lorem ipsum</div>
+    </div>
+    
+    <div>Lorem ipsum</div>
+    <div>
+      Lorem ipsum
+      <div>
+        Lorem ipsum
+        <div>Lorem ipsum</div>
+      </div>
+    </div>
+
+    <content></content>
+
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: "parent-elt",
+    properties: {
+      
+    },
+    ready: function () {
+
+    }
+  });
+</script>
