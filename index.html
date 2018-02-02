@@ -140,7 +140,8 @@
           targetId: e.target.id,
           targetType: e.target.is ? e.target.is : e.target.nodeName,
           srcElementId: e.srcElement.id,
-          srcElementType: e.srcElement.is ? e.srcElement.is : e.srcElement.nodeName
+          srcElementType: e.srcElement.is ? e.srcElement.is : e.srcElement.nodeName,
+          detail: e.detail
         };
 
         var msg = [ "Index page change event handler for ", JSON.stringify(data, null, " ")].join("\n");
