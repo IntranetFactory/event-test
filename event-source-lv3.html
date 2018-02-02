@@ -10,15 +10,16 @@
       }
     </style>
 
-    <label id="label" for="input">{{label}}</label>
-    <input id="input" type="text" placeholder$="{{placeholder}}" />
-    <button id="button">{{buttonText}}</button>
+    <div>
+      <label id="label" for="input">{{label}}</label>
+      <input id="input" type="text" placeholder$="{{placeholder}}" />
+    </div>
 
     <event-source-lv2
       id="eventSrouceLv3"
       label="Event source level 3"
       placeholder="type to trigger change event on level 3"
-      button-text="click to trigger click event on level 3"
+      dipatch-method="dispatchMethod"
     ></event-source-lv2>
   </template>
 </dom-module>
@@ -49,6 +50,11 @@
         type: String,
         value: '',
         title: 'Value'
+      },
+
+      dispatchMethod: {
+        type: String,
+        value: 'event'
       }
     },
 

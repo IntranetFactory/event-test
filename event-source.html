@@ -11,7 +11,6 @@
 
     <label id="label" for="input">{{label}}</label>
     <input id="input" type="text" placeholder$="{{placeholder}}" />
-    <button id="button">{{buttonText}}</button>
   </template>
 </dom-module>
 
@@ -32,15 +31,15 @@
         title: 'Placeholder text'
       },
 
-      buttonText: {
-        type: String,
-        value: ''
-      },
-
       value: {
         type: String,
         value: '',
         title: 'Value'
+      },
+
+      dispatchMethod: {
+        type: String,
+        value: 'event'
       }
     },
 

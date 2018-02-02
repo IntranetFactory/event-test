@@ -70,13 +70,12 @@
     </div>
     <div class="column">
       <label for="consoleOutput" class="console-label">Console output:</label>
+      <button id="consoleClear">Clear console</button>
       <textarea id="consoleOutput" rows="20" class="console-area"></textarea>
     </div>
   </div>
 
   <script>
-    if (!window.TangereEventTest) { window.TangereEventTest = {}; }
-
     var consoleOutput = document.getElementById('consoleOutput');
 
     function log(text) {
@@ -84,12 +83,20 @@
       consoleOutput.append("\n");
     }
 
+    var consoleClear = document.getElementById('consoleClear');
+    consoleClear.addEventListener('click', function() {
+      consoleOutput.value = "";
+    });
+
     document.addEventListener('WebComponentsReady', function(e) {
+
+      var eventTest = document.getElementById('eventTest');
 
       var dmContainer = document.getElementById('dmContainer');
       dmContainer.addEventListener('change', function(event) {
         var value = event.target.value;
-        window.TangereEventTest.dispatchmethod = value;
+        eventTest.dispatchMethod = value;
+        log('Dispatch method changed to : ' + value);
       });
 
       var c = document.getElementById('container');
@@ -100,6 +107,10 @@
 
       c.addEventListener('change', function(e) {
         log("change: " + e.srcElement.id);
+      });
+
+      c.addEventListener('click', function(e) {
+        log("click: " + e.srcElement.id);
       });
 
     });

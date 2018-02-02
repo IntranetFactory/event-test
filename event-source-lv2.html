@@ -13,14 +13,13 @@
     <div>
       <label id="label" for="input">{{label}}</label>
       <input id="input" type="text" placeholder$="{{placeholder}}" />
-      <button id="button">{{buttonText}}</button>
     </div>
 
     <event-source 
       id="eventSourceLv2"
       label="Event source level 2"
       placeholder="type to trigger change event on level 2"
-      button-text="click to trigger click event on level 2"
+      dispatch-method="dispatchMethod"
     ></event-source>
   </template>
 </dom-module>
@@ -51,6 +50,11 @@
         type: String,
         value: '',
         title: 'Value'
+      },
+
+      dispatchMethod: {
+        type: String,
+        value: 'event'
       }
     },
 
