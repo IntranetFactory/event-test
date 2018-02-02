@@ -1,0 +1,86 @@
+<link rel="import" href="components/tangere/tangere.html">
+<link rel="import" href="event-source-lv2.html" />
+
+<dom-module id="event-source">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+    </style>
+
+    <label id="label" for="input">{{label}}</label>
+    <input id="input" type="text" placeholder$="{{placeholder}}" />
+    <button id="button">{{buttonText}}</button>
+
+    <event-source-lv2
+      id="eventSrouceLv3"
+      label="Event source level 3"
+      placeholder="type to trigger change event on level 3"
+      button-text="click to trigger click event on level 3"
+    ></event-source-lv2>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: 'event-source',
+    properties: {
+
+      label: {
+        type: String,
+        value: '',
+        title: 'Label'
+      },
+
+      placeholder: {
+        type: String,
+        value: '',
+        title: 'Placeholder text'
+      },
+
+      buttonText: {
+        type: String,
+        value: ''
+      },
+
+      value: {
+        type: String,
+        value: '',
+        observer: '_valueChanged',
+        title: 'Value'
+      }
+    },
+
+    ready: function() {
+
+      var self = this;
+      var valueProvider = this.$.input;
+
+      valueProvider.addEventListener('change', function(e) {
+        e.stopPropagation();
+        self.validate();
+        // self.fire('change', { value: e.target.value }, { bubbles: false });
+        self.fire('change', { value: e.target.value }, { bubbles: true });
+        // self.dispatchEvent(new Event('change', { bubbles: false }));
+        // self.dispatchEvent(new Event('change', { bubbles: true }));
+        // self.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+      });
+
+      valueProvider.addEventListener('blur', function(e) {
+        e.stopPropagation();
+        self.validate();
+      });
+
+      valueProvider.addEventListener('keypress', function(event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+        }
+      });
+
+      this._isReady = true;
+      this._internalValidStateUpdate(this.required, this.maxChars);
+    }
+  });
+</script>

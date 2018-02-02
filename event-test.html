@@ -1,6 +1,7 @@
-<link rel="import" href="../tangere/tangere.html" />
-<link rel="import" href="at-form-text.html" />
-<link rel="import" href="test-form-text.html" />
+<link rel="import" href="components/tangere/tangere.html" />
+<link rel="import" href="event-source.html" />
+<link rel="import" href="event-source-lv2.html" />
+<link rel="import" href="event-source-lv3.html" />
 
 <dom-module id="event-test">
   <template>
@@ -15,9 +16,9 @@
       }
     </style>
     
-    <at-form-text id="first" class="mt" type="text" placeholder="first input"></at-form-text>
-    <input id="second" class="mt" type="text" placeholder="second input">
-    <test-form-text id="third" class="mt"></test-form-text>
+    <event-source id="level1EventSource" class="mt"></event-source>
+    <event-source-lv2 id="level2EventSource" class="mt"></event-source-lv2>
+    <event-source-lv3 id="level3EventSource" class="mt"></event-source-lv3>
 
   </template>
 </dom-module>
