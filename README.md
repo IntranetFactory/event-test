@@ -54,9 +54,9 @@
 |                                                                                  | Chrome  | **false** / **false** | **true** / **true** |
 | .dispatchEvent(new CustomEvent('change', { **bubbles: false, composed: true** }) | Firefox | false / NA | false / NA |
 |                                                                                  | Edge    | false / NA | false / NA |
-|                                                                 | Chrome  | true<sup>1</sup> / true<sup>1</sup> | true / **false** |
-| .dispatchEvent(new CustomEvent('change', { **bubbles: true** }) | Firefox | true<sup>1</sup> / NA | true / NA |
-|                                                                 | Edge    | true<sup>1</sup> / NA | true / NA |
+|                                                                 | Chrome  | true<sup>1</sup> / true<sup>1</sup> | false / **false** |
+| .dispatchEvent(new CustomEvent('change', { **bubbles: true** }) | Firefox | true<sup>1</sup> / NA | false / NA |
+|                                                                 | Edge    | true<sup>1</sup> / NA | false / NA |
 |                                                                                 | Chrome  | true / true | true / true |
 | .dispatchEvent(new CustomEvent('change', { **bubbles: true, composed: true** }) | Firefox | true / NA | true / NA |
 |                                                                                 | Edge    | true / NA | true / NA |
