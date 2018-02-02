@@ -143,8 +143,8 @@
         var data = {
           targetId: e.target.id,
           targetType: e.target.is ? e.target.is : e.target.nodeName,
-          srcElementId: e.srcElement.id,
-          srcElementType: e.srcElement.is ? e.srcElement.is : e.srcElement.nodeName,
+          srcElementId: e.srcElement && e.srcElement.id ? e.srcElement.id : 'N/A',
+          srcElementType: e.srcElement && e.srcElement.is ? e.srcElement.is : 'N/A',
           detail: e.detail
         };
 
