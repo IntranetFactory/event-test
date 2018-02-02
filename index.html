@@ -11,29 +11,95 @@
   <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="event-test.html" />
   <style>
+    .horizontal-layout {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .column {
+      flex: 6;
+      margin: 0 12px;
+    }
+
     .mt {
-      display: block;
       margin-top: 16px;
+    }
+
+    .console-label {
+      display: block;
+    }
+
+    .console-area {
+      width: 100%;
     }
   </style>
 </head>
 
 <body>
-  <div id="container">
-    <event-test id="eventTest"></event-test>
+  <fieldset id="dmContainer">
+    <legend>Select event dispatch method</legend>
+    <div>
+      <input id="method1" type="radio" name="dispatchmethod" value="change" checked />
+      <label for="method1">HTMLInput.change event</label>
+    </div>
+    <div>
+      <input id="method2" type="radio" name="dispatchmethod" value="fire" />
+      <label for="method2">Polymer.base.fire('change', { ... }, { bubbles: false })</label>
+    </div>
+    <div>
+      <input id="method3" type="radio" name="dispatchmethod" value="fire_bubbling" />
+      <label for="method3">Polymer.base.fire('change', { ... }, { bubbles: true })</label>
+    </div>
+    <div>
+      <input id="method4" type="radio" name="dispatchmethod" value="dispatch" />
+      <label for="method4">Polymer.base.fire('change', { ... }, { bubbles: false })</label>
+    </div>
+    <div>
+      <input id="method5" type="radio" name="dispatchmethod" value="dispatch_bubbling" />
+      <label for="method5">Polymer.base.fire('change', { ... }, { bubbles: true })</label>
+    </div>
+    <div>
+      <input id="method6" type="radio" name="dispatchmethod" value="dispatch_composed" />
+      <label for="method6">Polymer.base.fire('change', { ... }, { bubbles: true, composed: true })</label>
+    </div>
+  </fieldset>
+
+  <div class="horizontal-layout mt">
+    <div id="container" class="column">
+      <event-test id="eventTest"></event-test>
+    </div>
+    <div class="column">
+      <label for="consoleOutput" class="console-label">Console output:</label>
+      <textarea id="consoleOutput" rows="20" class="console-area"></textarea>
+    </div>
   </div>
-  
+
   <script>
+    if (!window.TangereEventTest) { window.TangereEventTest = {}; }
+
+    var consoleOutput = document.getElementById('consoleOutput');
+
+    function log(text) {
+      consoleOutput.append(text);
+      consoleOutput.append("\n");
+    }
+
     document.addEventListener('WebComponentsReady', function(e) {
 
-      var c = document.getElementById('container');
-      
-      c.addEventListener('value-changed', function(e) {
-        console.log("value-changed" + e.srcElement.id);
+      var dmContainer = document.getElementById('dmContainer');
+      dmContainer.addEventListener('change', function(event) {
+        var value = event.target.value;
+        window.TangereEventTest.dispatchmethod = value;
       });
-      
+
+      var c = document.getElementById('container');
+
+      c.addEventListener('value-changed', function(e) {
+        log("value-changed" + e.srcElement.id);
+      });
+
       c.addEventListener('change', function(e) {
-        console.log("change: " + e.srcElement.id);
+        log("change: " + e.srcElement.id);
       });
 
     });

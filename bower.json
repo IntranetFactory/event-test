@@ -2,6 +2,7 @@
   "name": "event-test",
   "private": true,
   "dependencies": {
+<<<<<<< HEAD
     "webcomponentsjs": "webcomponents/webcomponentsjs#1.1.0",
     "polymer": "polymer/polymer#2.4.0",
     "tangere": "TangereJs/tangere#master",
@@ -21,4 +22,11 @@
     "paper-radio-button": "master",
     "iron-meta": "master"
   }
+=======
+    "webcomponentsjs": "webcomponents/webcomponentsjs#0.7.24",
+    "polymer": "polymer/polymer#1.11.2",
+    "tangere": "TangereJs/tangere#master"
+  },
+  "version": "0.1.0.0"
+>>>>>>> #v1
 }
