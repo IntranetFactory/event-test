@@ -107,14 +107,14 @@
     var consoleOutput = document.getElementById('consoleOutput');
 
     function log(text) {
-      consoleOutput.append(text);
-      consoleOutput.append("\n");
+      consoleOutput.value = consoleOutput.value + text + "\n";
     }
+    
     window.logToIndexPage = log;
 
     var consoleClear = document.getElementById('consoleClear');
     consoleClear.addEventListener('click', function() {
-      consoleOutput.innerHTML = "";
+      consoleOutput.value = "";
     });
 
     document.addEventListener('WebComponentsReady', function(e) {
