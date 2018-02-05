@@ -159,6 +159,80 @@
         }
 
       }.bind(this));
+
+      valueProvider.addEventListener('click', function(e) {
+        if (!this.dispatchMethod || this.dispatchMethod === "event") return;
+
+        e.stopPropagation();
+        var dm = this.dispatchMethod;
+        var shadowType = window.shadowType(this.shadowRoot);
+
+        if (dm === "fire") {
+          this.fire('click', { value: e.target.value }, { bubbles: false });
+
+        } else if (dm === "fire_bubbling") {
+          this.fire('click', { value: e.target.value }, { bubbles: true });
+
+        } else if (dm === "dispatch") {
+          if (!this.shadowRoot || shadowType === "v0") {
+            // custom event doesn't work in shadywDOM
+            var event = new Event('click', { bubbles: false });
+            event.detail = { value: e.target.value };
+            this.dispatchEvent(event);
+          
+          } else {
+            this.dispatchEvent(new CustomEvent('click', { 
+              bubbles: false, 
+              detail: { value: e.target.value } 
+            }));
+          }
+        
+        } else if (dm === "dispatch_composed") {
+          if (!this.shadowRoot || shadowType === "v0") {
+            // custom event doesn't work in shadywDOM
+            var event = new Event('click', { bubbles: false, composed: true });
+            event.detail = { value: e.target.value };
+            this.dispatchEvent(event);
+          
+          } else {
+            this.dispatchEvent(new CustomEvent('click', { 
+              bubbles: false, 
+              composed: true, 
+              detail: { value: e.target.value } 
+            }));
+          }
+          
+        } else if (dm === "dispatch_bubbling") {
+          if (!this.shadowRoot || shadowType === "v0") {
+            // custom event doesn't work in shadywDOM
+            var event = new Event('click', { bubbles: true });
+            event.detail = { value: e.target.value };
+            this.dispatchEvent(event);
+          
+          } else {
+            this.dispatchEvent(new CustomEvent('click', { 
+              bubbles: true, 
+              detail: { value: e.target.value } 
+            }));
+          }
+
+        } else if (dm === "dispatch_bubbling_composed") {
+          if (!this.shadowRoot || shadowType === "v0") {
+            // custom event doesn't work in shadywDOM
+            var event = new Event('click', { bubbles: true, composed: true });
+            event.detail = { value: e.target.value };
+            this.dispatchEvent(event);
+          
+          } else {
+            this.dispatchEvent(new CustomEvent('click', { 
+              bubbles: true, 
+              composed: true, 
+              detail: { value: e.target.value } 
+            }));
+          }
+        }
+
+      }.bind(this));      
     }
   });
 </script>
