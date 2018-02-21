@@ -6,87 +6,52 @@ The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
 The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
-<link rel="import" href="../utils/boot.html">
+--><link rel="import" href="../utils/boot.html">
 <link rel="import" href="../utils/mixin.html">
 <link rel="import" href="../utils/async.html">
 
 <script>
-  (function () {
+(function () {
 
-    'use strict';
+  'use strict';
 
-    /** @const {!AsyncInterface} */
-    const microtask = Polymer.Async.microTask;
+  /** @const {!AsyncInterface} */
+
+  var microtask = Polymer.Async.microTask;
+
+  /**
+   * Element class mixin that provides basic meta-programming for creating one
+   * or more property accessors (getter/setter pair) that enqueue an async
+   * (batched) `_propertiesChanged` callback.
+   *
+   * For basic usage of this mixin, call `MyClass.createProperties(props)`
+   * once at class definition time to create property accessors for properties
+   * named in props, implement `_propertiesChanged` to react as desired to
+   * property changes, and implement `static get observedAttributes()` and
+   * include lowercase versions of any property names that should be set from
+   * attributes. Last, call `this._enableProperties()` in the element's
+   * `connectedCallback` to enable the accessors.
+   *
+   * @mixinFunction
+   * @polymer
+   * @memberof Polymer
+   * @summary Element class mixin for reacting to property changes from
+   *   generated property accessors.
+   */
+  Polymer.PropertiesChanged = Polymer.dedupingMixin(function (superClass) {
 
     /**
-     * Element class mixin that provides basic meta-programming for creating one
-     * or more property accessors (getter/setter pair) that enqueue an async
-     * (batched) `_propertiesChanged` callback.
-     *
-     * For basic usage of this mixin, call `MyClass.createProperties(props)`
-     * once at class definition time to create property accessors for properties
-     * named in props, implement `_propertiesChanged` to react as desired to
-     * property changes, and implement `static get observedAttributes()` and
-     * include lowercase versions of any property names that should be set from
-     * attributes. Last, call `this._enableProperties()` in the element's
-     * `connectedCallback` to enable the accessors.
-     *
-     * @mixinFunction
      * @polymer
-     * @memberof Polymer
-     * @summary Element class mixin for reacting to property changes from
-     *   generated property accessors.
+     * @mixinClass
+     * @extends {superClass}
+     * @implements {Polymer_PropertiesChanged}
+     * @unrestricted
      */
-    Polymer.PropertiesChanged = Polymer.dedupingMixin(superClass => {
-
-      /**
-       * @polymer
-       * @mixinClass
-       * @extends {superClass}
-       * @implements {Polymer_PropertiesChanged}
-       * @unrestricted
-       */
-      class PropertiesChanged extends superClass {
-
-        /**
-         * Creates property accessors for the given property names.
-         * @param {!Object} props Object whose keys are names of accessors.
-         * @return {void}
-         * @protected
-         */
-        static createProperties(props) {
-          const proto = this.prototype;
-          for (let prop in props) {
-            // don't stomp an existing accessor
-            if (!(prop in proto)) {
-              proto._createPropertyAccessor(prop);
-            }
-          }
-        }
-
-        /**
-         * Returns an attribute name that corresponds to the given property.
-         * The attribute name is the lowercased property name. Override to
-         * customize this mapping.
-         * @param {string} property Property to convert
-         * @return {string} Attribute name corresponding to the given property.
-         *
-         * @protected
-         */
-        static attributeNameForProperty(property) {
-          return property.toLowerCase();
-        }
-
-        /**
-         * Override point to provide a type to which to deserialize a value to
-         * a given property.
-         * @param {string} name Name of property
-         *
-         * @protected
-         */
-        static typeForProperty(name) { } //eslint-disable-line no-unused-vars
+    var PropertiesChanged = function (_superClass) {
+      babelHelpers.inherits(PropertiesChanged, _superClass);
+      babelHelpers.createClass(PropertiesChanged, [{
+        key: '_createPropertyAccessor',
+        //eslint-disable-line no-unused-vars
 
         /**
          * Creates a setter/getter pair for the named property with its own
@@ -104,7 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {void}
          * @protected
          */
-        _createPropertyAccessor(property, readOnly) {
+        value: function _createPropertyAccessor(property, readOnly) {
           if (!this.hasOwnProperty('__dataHasAccessor')) {
             this.__dataHasAccessor = Object.assign({}, this.__dataHasAccessor);
           }
@@ -113,7 +78,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
           if (!this.__dataHasAccessor[property]) {
             this.__dataHasAccessor[property] = true;
-            const attr = this.constructor.attributeNameForProperty(property);
+            var attr = this.constructor.attributeNameForProperty(property);
             this.__dataAttributes[attr] = property;
             this._definePropertyAccessor(property, readOnly);
           }
@@ -125,13 +90,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @param {boolean=} readOnly When true, no setter is created
          * @return {void}
          */
-         _definePropertyAccessor(property, readOnly) {
+
+      }, {
+        key: '_definePropertyAccessor',
+        value: function _definePropertyAccessor(property, readOnly) {
           Object.defineProperty(this, property, {
             /* eslint-disable valid-jsdoc */
             /** @this {PropertiesChanged} */
-            get() {
+            get: function get() {
               return this.__data[property];
             },
+
             /** @this {PropertiesChanged} */
             set: readOnly ? function () {} : function (value) {
               this._setProperty(property, value);
@@ -139,35 +108,91 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             /* eslint-enable */
           });
         }
+      }], [{
+        key: 'createProperties',
 
-        constructor() {
-          super();
-          this.__dataEnabled = false;
-          this.__dataReady = false;
-          this.__dataInvalid = false;
-          this.__data = {};
-          this.__dataPending = null;
-          this.__dataOld = null;
-          this.__dataInstanceProps = null;
-          this.__serializing = false;
-          this._initializeProperties();
+
+        /**
+         * Creates property accessors for the given property names.
+         * @param {!Object} props Object whose keys are names of accessors.
+         * @return {void}
+         * @protected
+         */
+        value: function createProperties(props) {
+          var proto = this.prototype;
+          for (var prop in props) {
+            // don't stomp an existing accessor
+            if (!(prop in proto)) {
+              proto._createPropertyAccessor(prop);
+            }
+          }
         }
 
         /**
-         * Lifecycle callback called when properties are enabled via
-         * `_enableProperties`.
+         * Returns an attribute name that corresponds to the given property.
+         * The attribute name is the lowercased property name. Override to
+         * customize this mapping.
+         * @param {string} property Property to convert
+         * @return {string} Attribute name corresponding to the given property.
          *
-         * Users may override this function to implement behavior that is
-         * dependent on the element having its property data initialized, e.g.
-         * from defaults (initialized from `constructor`, `_initializeProperties`),
-         * `attributeChangedCallback`, or values propagated from host e.g. via
-         * bindings.  `super.ready()` must be called to ensure the data system
-         * becomes enabled.
-         *
-         * @return {void}
-         * @public
+         * @protected
          */
-        ready() {
+
+      }, {
+        key: 'attributeNameForProperty',
+        value: function attributeNameForProperty(property) {
+          return property.toLowerCase();
+        }
+
+        /**
+         * Override point to provide a type to which to deserialize a value to
+         * a given property.
+         * @param {string} name Name of property
+         *
+         * @protected
+         */
+
+      }, {
+        key: 'typeForProperty',
+        value: function typeForProperty(name) {}
+      }]);
+
+      function PropertiesChanged() {
+        babelHelpers.classCallCheck(this, PropertiesChanged);
+
+        var _this = babelHelpers.possibleConstructorReturn(this, (PropertiesChanged.__proto__ || Object.getPrototypeOf(PropertiesChanged)).call(this));
+
+        _this.__dataEnabled = false;
+        _this.__dataReady = false;
+        _this.__dataInvalid = false;
+        _this.__data = {};
+        _this.__dataPending = null;
+        _this.__dataOld = null;
+        _this.__dataInstanceProps = null;
+        _this.__serializing = false;
+        _this._initializeProperties();
+        return _this;
+      }
+
+      /**
+       * Lifecycle callback called when properties are enabled via
+       * `_enableProperties`.
+       *
+       * Users may override this function to implement behavior that is
+       * dependent on the element having its property data initialized, e.g.
+       * from defaults (initialized from `constructor`, `_initializeProperties`),
+       * `attributeChangedCallback`, or values propagated from host e.g. via
+       * bindings.  `super.ready()` must be called to ensure the data system
+       * becomes enabled.
+       *
+       * @return {void}
+       * @public
+       */
+
+
+      babelHelpers.createClass(PropertiesChanged, [{
+        key: 'ready',
+        value: function ready() {
           this.__dataReady = true;
           this._flushProperties();
         }
@@ -181,11 +206,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {void}
          * @protected
          */
-        _initializeProperties() {
+
+      }, {
+        key: '_initializeProperties',
+        value: function _initializeProperties() {
           // Capture instance properties; these will be set into accessors
           // during first flush. Don't set them here, since we want
           // these to overwrite defaults/constructor assignments
-          for (let p in this.__dataHasAccessor) {
+          for (var p in this.__dataHasAccessor) {
             if (this.hasOwnProperty(p)) {
               this.__dataInstanceProps = this.__dataInstanceProps || {};
               this.__dataInstanceProps[p] = this[p];
@@ -207,7 +235,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {void}
          * @protected
          */
-        _initializeInstanceProperties(props) {
+
+      }, {
+        key: '_initializeInstanceProperties',
+        value: function _initializeInstanceProperties(props) {
           Object.assign(this, props);
         }
 
@@ -220,7 +251,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {void}
          * @protected
          */
-        _setProperty(property, value) {
+
+      }, {
+        key: '_setProperty',
+        value: function _setProperty(property, value) {
           if (this._setPendingProperty(property, value)) {
             this._invalidateProperties();
           }
@@ -232,7 +266,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {*} Value for the given property
          * @protected
          */
-        _getProperty(property) {
+
+      }, {
+        key: '_getProperty',
+        value: function _getProperty(property) {
           return this.__data[property];
         }
 
@@ -249,9 +286,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {boolean} Returns true if the property changed
          * @protected
          */
-        _setPendingProperty(property, value, ext) {
-          let old = this.__data[property];
-          let changed = this._shouldPropertyChange(property, value, old);
+
+      }, {
+        key: '_setPendingProperty',
+        value: function _setPendingProperty(property, value, ext) {
+          var old = this.__data[property];
+          var changed = this._shouldPropertyChange(property, value, old);
           if (changed) {
             if (!this.__dataPending) {
               this.__dataPending = {};
@@ -275,13 +315,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {void}
          * @protected
          */
-        _invalidateProperties() {
+
+      }, {
+        key: '_invalidateProperties',
+        value: function _invalidateProperties() {
+          var _this2 = this;
+
           if (!this.__dataInvalid && this.__dataReady) {
             this.__dataInvalid = true;
-            microtask.run(() => {
-              if (this.__dataInvalid) {
-                this.__dataInvalid = false;
-                this._flushProperties();
+            microtask.run(function () {
+              if (_this2.__dataInvalid) {
+                _this2.__dataInvalid = false;
+                _this2._flushProperties();
               }
             });
           }
@@ -298,7 +343,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {void}
          * @protected
          */
-        _enableProperties() {
+
+      }, {
+        key: '_enableProperties',
+        value: function _enableProperties() {
           if (!this.__dataEnabled) {
             this.__dataEnabled = true;
             if (this.__dataInstanceProps) {
@@ -318,9 +366,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {void}
          * @protected
          */
-        _flushProperties() {
+
+      }, {
+        key: '_flushProperties',
+        value: function _flushProperties() {
           if (this.__dataPending && this.__dataOld) {
-            let changedProps = this.__dataPending;
+            var changedProps = this.__dataPending;
             this.__dataPending = null;
             this._propertiesChanged(this.__data, changedProps, this.__dataOld);
           }
@@ -338,8 +389,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {void}
          * @protected
          */
-        _propertiesChanged(currentProps, changedProps, oldProps) { // eslint-disable-line no-unused-vars
-        }
+
+      }, {
+        key: '_propertiesChanged',
+        value: function _propertiesChanged(currentProps, changedProps, oldProps) {} // eslint-disable-line no-unused-vars
+
 
         /**
          * Method called to determine whether a property value should be
@@ -359,12 +413,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          *   and enqueue a `_proeprtiesChanged` callback
          * @protected
          */
-        _shouldPropertyChange(property, value, old) {
+
+      }, {
+        key: '_shouldPropertyChange',
+        value: function _shouldPropertyChange(property, value, old) {
           return (
             // Strict equality check
-            (old !== value &&
-              // This ensures (old==NaN, value==NaN) always returns false
-              (old === old || value === value))
+            old !== value && (
+            // This ensures (old==NaN, value==NaN) always returns false
+            old === old || value === value)
           );
         }
 
@@ -378,12 +435,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {void}
          * @suppress {missingProperties} Super may or may not implement the callback
          */
-        attributeChangedCallback(name, old, value) {
+
+      }, {
+        key: 'attributeChangedCallback',
+        value: function attributeChangedCallback(name, old, value) {
           if (old !== value) {
             this._attributeToProperty(name, value);
           }
-          if (super.attributeChangedCallback) {
-            super.attributeChangedCallback(name, old, value);
+          if (babelHelpers.get(PropertiesChanged.prototype.__proto__ || Object.getPrototypeOf(PropertiesChanged.prototype), 'attributeChangedCallback', this)) {
+            babelHelpers.get(PropertiesChanged.prototype.__proto__ || Object.getPrototypeOf(PropertiesChanged.prototype), 'attributeChangedCallback', this).call(this, name, old, value);
           }
         }
 
@@ -399,12 +459,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * returned from `typeForProperty`
          * @return {void}
          */
-        _attributeToProperty(attribute, value, type) {
+
+      }, {
+        key: '_attributeToProperty',
+        value: function _attributeToProperty(attribute, value, type) {
           if (!this.__serializing) {
-            const map = this.__dataAttributes;
-            const property = map && map[attribute] || attribute;
-            this[property] = this._deserializeValue(value, type ||
-              this.constructor.typeForProperty(property));
+            var map = this.__dataAttributes;
+            var property = map && map[attribute] || attribute;
+            this[property] = this._deserializeValue(value, type || this.constructor.typeForProperty(property));
           }
         }
 
@@ -418,11 +480,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @param {*=} value Property value to refect.
          * @return {void}
          */
-        _propertyToAttribute(property, attribute, value) {
+
+      }, {
+        key: '_propertyToAttribute',
+        value: function _propertyToAttribute(property, attribute, value) {
           this.__serializing = true;
-          value = (arguments.length < 3) ? this[property] : value;
-          this._valueToNodeAttribute(/** @type {!HTMLElement} */(this), value,
-            attribute || this.constructor.attributeNameForProperty(property));
+          value = arguments.length < 3 ? this[property] : value;
+          this._valueToNodeAttribute( /** @type {!HTMLElement} */this, value, attribute || this.constructor.attributeNameForProperty(property));
           this.__serializing = false;
         }
 
@@ -439,8 +503,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @param {string} attribute Attribute name to serialize to.
          * @return {void}
          */
-        _valueToNodeAttribute(node, value, attribute) {
-          const str = this._serializeValue(value);
+
+      }, {
+        key: '_valueToNodeAttribute',
+        value: function _valueToNodeAttribute(node, value, attribute) {
+          var str = this._serializeValue(value);
           if (str === undefined) {
             node.removeAttribute(attribute);
           } else {
@@ -459,8 +526,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @return {string | undefined} String serialized from the provided
          * property  value.
          */
-        _serializeValue(value) {
-          switch (typeof value) {
+
+      }, {
+        key: '_serializeValue',
+        value: function _serializeValue(value) {
+          switch (typeof value === 'undefined' ? 'undefined' : babelHelpers.typeof(value)) {
             case 'boolean':
               return value ? '' : undefined;
             default:
@@ -480,23 +550,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @param {*=} type Type to deserialize the string to.
          * @return {*} Typed value deserialized from the provided string.
          */
-        _deserializeValue(value, type) {
+
+      }, {
+        key: '_deserializeValue',
+        value: function _deserializeValue(value, type) {
           switch (type) {
             case Boolean:
-              return (value !== null);
+              return value !== null;
             case Number:
               return Number(value);
             default:
               return value;
           }
         }
-
-      }
-
+      }]);
       return PropertiesChanged;
-    });
+    }(superClass);
 
-
-  })();
-
-</script>
+    return PropertiesChanged;
+  });
+})();</script>
