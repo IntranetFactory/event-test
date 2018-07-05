@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>lifecycle methods demo</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="lifecycle-methods-demo-elt.html">
+</head>
+
+<body>
+  <h3>Lifecycle methods demo</h3>
+  <div id="insertPoint"></div>
+  <script>
+    document.addEventListener('WebComponentsReady', function() {
+      console.log("Element is now created");
+      var elt = document.createElement('lifecycle-methods-demo-elt');
+      var insertPoint = document.getElementById('insertPoint');
+
+      console.log("Element is now attached");
+      insertPoint.appendChild(elt);
+
+    }); 
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<link rel="import" href="../tangere/tangere.html">
+
+<script>
+  Tangere.behaviors.modelBind = {
+
+    observers: ['_bindModel(model,modelBind)'],
+
+
+    properties: {
+      /**
+      * modelBind
+      *
+      * @property modelBind
+      * @type String
+      * @default ''
+      */
+      modelBind: {
+        type: String,
+        value: ""
+      },
+      /**
+      * model
+      *
+      * @property model
+      * @type Object
+      * @default null
+      */
+      model: {
+        type: Object,
+        value: null
+      }
+    },
+
+    _bindModel: function(model,modelBind) {
+
+      var i = 0;
+    
+      if (model && modelBind) {
+
+        var modelVars = Object.getOwnPropertyNames(this.model);
+        var vars = "";
+        for (i = 0; i < modelVars.length; i++) {
+          var name = modelVars[i];
+          vars = vars + ", " + name + "=this." + name;
+        }
+
+        if (vars != "") vars = "var " + vars.substring(1);
+
+        var binder = this._parseBinder(modelBind);
+
+        var binds = Object.getOwnPropertyNames(binder);
+        for (i = 0; i < binds.length; i++) {
+          var bind = binds[i];
+
+          if (this[bind] == undefined) {
+            console.error("cannot bind to unknown property " + bind);
+            continue;
+          }
+
+          var pre = "(", post = ")";
+
+          // ensure that boolean property remains boolean
+          if (typeof this[bind] == "boolean") {
+            pre = "!!(";
+          }
+
+          // evaluate binder function on current model and assign result to property
+          try {
+            var func = new Function(vars + ";return (" + pre + binder[bind] + post + ");");
+            this[bind] = func.call(this.model);
+          } catch (ex) {
+            console.error("failed to bind " + bind + " to " + binder[bind] + ": " + ex.message);
+          }
+
+        }
+      }
+
+      // call _modelChanged if present
+      if (!(this._modelChanged == undefined)) {
+        this._modelChanged();
+      }
+
+    },
+
+    _parseBinder: function(s) {
+
+      var binder = {};
+      
+      if (!s) return binder;
+
+      // convert prop1:val,prop2:expr,... to binder: { prop1: val, prop2: expr }
+      var defs = s.split(",");
+      for (var i = 0; i < defs.length; i++) {
+        var def = defs[i];
+        var split = def.split(":");
+        if (split.length == 2) {
+          binder[split[0].trim()] = split[1].trim();
+        }
+      }
+
+      return binder;
+    },
+
+    actionListener: function (event) {
+      
+      var oldModel = this.model;
+
+      // we now only use the "real" model
+      this.model = event.detail.model.state.model;
+
+      // if this.model is unchanged then a "deep" change happened
+      // and modelBind needs to invoked directly
+      if (oldModel == this.model) {
+        this._bindModel(this.model, this.modelBind);
+      }
+    },
+
+    __getElementPath: function (element) {
+      if (element == null) return [];
+
+      var pathArr = [element];
+
+      while (element.parentElement != null) {
+        element = element.parentElement;
+        pathArr.push(element);
+      }
+
+      return pathArr;
+    }
+    
+
+  };
+</script>

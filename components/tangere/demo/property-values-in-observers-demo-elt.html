@@ -1,0 +1,100 @@
+<link rel="import" href="../../tangere/tangere.html" />
+<dom-module id="property-values-in-observers-demo-elt">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+
+      .item {
+        margin-top: 8px;
+      }
+    </style>
+    <div class="item">
+      <div id="prop1Title"></div>
+      <div id="prop1Echo"></div>
+    </div>
+    <div class="item">
+      <div id="prop2Title"></div>
+      <div id="prop2Echo"></div>
+    </div>
+    <div class="item">
+      <div id="prop3Title"></div>
+      <div id="prop3Echo"></div>
+    </div>
+    <div class="item">
+      <div id="initTitle"></div>
+      <div id="initEcho"></div>
+    </div>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: 'property-values-in-observers-demo-elt',
+    properties: {
+
+      prop1: {
+        type: String,
+        value: 'prop1value',
+        observer: '_prop1Changed'
+      },
+
+      prop2: {
+        type: String,
+        value: 'prop2value',
+        observer: '_prop2Changed'
+      },
+
+      prop3: {
+        type: String,
+        value: 'prop3value',
+        observer: '_prop3Changed'
+      }
+    },
+
+    observers: [
+      '_initialize(prop1, prop2, prop3)'
+    ],
+
+    _printValues: function(echoElt) {
+      var values = {
+        prop1: this.prop1,
+        prop2: this.prop2,
+        prop3: this.prop3
+      };
+      var valuesJson = JSON.stringify(values);
+      var text = `Property values: ${valuesJson}`;
+      console.log(text);
+      Polymer.dom(echoElt).innerHTML = text;
+    },
+
+    _prop1Changed: function(newValue, oldValue) {
+      var title = `Polymer.version ${Polymer.version}: ${this.is} prop1Changed called`
+      console.log(title);
+      Polymer.dom(this.$.prop1Title).innerHTML = title;
+      this._printValues(this.$.prop1Echo);
+    },
+
+    _prop2Changed: function(newValue, oldValue) {
+      var title = `Polymer.version ${Polymer.version}: ${this.is} prop2Changed called`;
+      console.log(title);
+      Polymer.dom(this.$.prop2Title).innerHTML = title;
+      this._printValues(this.$.prop2Echo);
+    },
+
+    _prop3Changed: function(newValue, oldValue) {
+      var title = `Polymer.version ${Polymer.version}: ${this.is} prop3Changed called`;
+      console.log(title);
+      Polymer.dom(this.$.prop3Title).innerHTML = title;
+      this._printValues(this.$.prop3Echo);
+    },
+
+    _initialize: function(prop1, prop2, prop3) {
+      var title = `Polymer.version ${Polymer.version}: ${this.is} initialize called`;
+      console.log(title);
+      Polymer.dom(this.$.initTitle).innerHTML = title;
+      this._printValues(this.$.initEcho);
+    }
+  })
+</script>

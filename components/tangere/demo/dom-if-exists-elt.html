@@ -1,0 +1,70 @@
+<link rel="import" href="../../tangere/tangere.html" />
+
+<dom-module id="dom-if-exists-elt">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+
+        margin-top: 16px;
+        border: 1px solid peru;
+      }
+
+      .inline {
+        display: inline;
+      }
+
+      .item {
+        margin: 16px 0 0 0;
+      }
+    </style>
+
+    <div>This is dom-if exists demo elt</div>
+    <div>Polymer version is <span>{{version}}</span></div>
+    <div>Value of flag is <span>{{flag}}</span></div>
+
+    <template is="dom-if" if="{{!flag}}">
+      <div class="item">If flag is false, this text will be displayed using
+        <pre class="inline">&#x3C;template is=&#x22;dom-if&#x22;&#x3E;</pre> element
+      </div>
+    </template>
+    <template is="dom-if" if="{{flag}}">
+      <div class="item">If flag is true, this text will be displayed using
+        <pre class="inline">&#x3C;template is=&#x22;dom-if&#x22;&#x3E;</pre> element
+      </div>
+    </template>
+
+    <dom-if if="{{!flag}}">
+      <div class="item">If flag is false, this text will be displayed using
+        <pre class="inline">&#x3C;dom-if&#x3E;</pre> element
+      </div>
+    </dom-if>
+    <dom-if if="{{flag}}">
+      <div class="item">If flag is true, this text will be displayed using
+        <pre class="inline">&#x3C;dom-if&#x3E;</pre> element
+      </div>
+    </dom-if>
+
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "dom-if-exists-elt",
+    properties: {
+      flag: {
+        type: Boolean,
+        value: false
+      },
+      version: {
+        type: String,
+        value: Polymer.version
+      }
+    },
+    ready: function() {
+      console.log('element is ready');
+      
+    }
+  });
+</script>

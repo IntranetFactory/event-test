@@ -72,98 +72,98 @@
         // webcomponent as child
 
         test('scope single node without children', function() {
+          var nativeShadow = Polymer.Settings.useNativeShadow || Polymer.Settings.useShadow;
 
           var testElt = fixture('tests');
           var elt = document.createElement('div');
-          var isShadowDOM = testElt.shadowRoot ? true : false;
 
           // assert that class list is empty
           assert.equal(elt.classList.length, 0);
 
           testElt.scopeSubtree(elt);
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(elt, 'parent-elt', isShadowDOM);
+          assertStyleScoping(elt, 'parent-elt', nativeShadow);
 
           // repeating the scoping doesn't multiply the class names
           testElt.scopeSubtree(elt);          
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(elt, 'parent-elt', isShadowDOM);
+          assertStyleScoping(elt, 'parent-elt', nativeShadow);
 
         });
 
         test('scope single node with children', function() {
+          var nativeShadow = Polymer.Settings.useNativeShadow || Polymer.Settings.useShadow;
 
           var testElt = fixture('tests');
           var elt = document.createElement('div');
           elt.innerHTML = '<div>Lorem ipsum <div>Lorem ipsum</div> <div>Lorem ipsum</div></div>';
 
-          var isShadowDOM = testElt.shadowRoot ? true : false;
-
           // assert that class list is empty
           assert.equal(elt.classList.length, 0);
 
           testElt.scopeSubtree(elt);
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(elt, 'parent-elt', isShadowDOM);
+          assertStyleScoping(elt, 'parent-elt', nativeShadow);
 
           // repeating the scoping doesn't multiply the class names
           testElt.scopeSubtree(elt);          
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(elt, 'parent-elt', isShadowDOM);
+          assertStyleScoping(elt, 'parent-elt', nativeShadow);
 
         });
 
         test('scope webcomponent as root', function() {
+          var nativeShadow = Polymer.Settings.useNativeShadow || Polymer.Settings.useShadow;
 
           var elt = fixture('tests');
           var scopeElt = document.createElement('child-elt');
-
-          var isShadowDOM = elt.shadowRoot ? true : false;
 
           // assert that class list is empty
           assert.equal(elt.classList.length, 0);
 
           scopeElt.scopeSubtree(elt);
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(elt, 'child-elt', isShadowDOM);
+          assertStyleScoping(elt, 'child-elt', nativeShadow);
 
           // repeating the scoping doesn't multiply the class names
           scopeElt.scopeSubtree(elt);
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(elt, 'child-elt', isShadowDOM);
+          assertStyleScoping(elt, 'child-elt', nativeShadow);
 
         });
 
         test('scope webcomponent as child', function() {
-
+          var nativeShadow = Polymer.Settings.useNativeShadow || Polymer.Settings.useShadow;
+          
           var elt = fixture('tests');
           var scopeElt = document.createElement('child-elt');
 
           var rootElt = document.createElement('div');
           rootElt.innerHTML = '<div>Lorem ipsum <div>Lorem ipsum</div> <div>Lorem ipsum</div><parent-elt></parent-elt></div>';
 
-          var isShadowDOM = elt.shadowRoot ? true : false;
-
           // assert that class list is empty
           assert.equal(rootElt.classList.length, 0);
 
           scopeElt.scopeSubtree(rootElt);
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(rootElt, 'child-elt', isShadowDOM);
+          assertStyleScoping(rootElt, 'child-elt', nativeShadow);
 
           // repeating the scoping doesn't multiply the class names
           scopeElt.scopeSubtree(rootElt);
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(rootElt, 'child-elt', isShadowDOM);
+          assertStyleScoping(rootElt, 'child-elt', nativeShadow);
 
         });
 
         test('scoping affects lightDOM but not localDOM', function() {
-
+          var nativeShadow = Polymer.Settings.useNativeShadow || Polymer.Settings.useShadow;
+          
           var elt = fixture('tests');
           var scopeElt = document.createElement('child-elt');
 
           var rootElt = document.createElement('div');
+          document.body.appendChild(rootElt);
+
           rootElt.innerHTML = 
             '<parent-elt>' +
               '<child-elt></child-elt>' +
@@ -171,20 +171,19 @@
               '<child-elt></child-elt>' +
             '</parent-elt>';
 
-          var isShadowDOM = elt.shadowRoot ? true : false;
-
           // assert that class list is empty
           assert.equal(rootElt.classList.length, 0);
           
           scopeElt.scopeSubtree(rootElt);
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(rootElt, 'child-elt', isShadowDOM);
+          assertStyleScoping(rootElt, 'child-elt', nativeShadow);
 
           // repeating the scoping doesn't multiply the class names
           scopeElt.scopeSubtree(elt);
           // assert that class list contains style-scope and parent-elt
-          assertStyleScoping(rootElt, 'child-elt', isShadowDOM);
-
+          assertStyleScoping(rootElt, 'child-elt', nativeShadow);
+          
+          document.body.removeChild(rootElt);
         });
 
       });

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>main document demo</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="../../at-core-style-classes/at-core-style-classes.html">
+  <custom-style>
+    <style is="custom-style" include="at-core-style-classes iron-flex">
+      .item {
+        padding: 8px;
+        margin: 0 8px;
+        border: 1px solid olivedrab;
+      }
+    </style>
+  </custom-style>
+
+</head>
+
+<body>
+  <div>Polymer.version =
+    <span id="verVal"></span>
+  </div>
+  <h3>If styling main document with classes from dom module works, you should see the placeholder bellow</h3>
+  <div class='m'>
+    <div class='placeholder-text'></div>
+    <div class='placeholder-text mtsm'></div>
+  </div>
+
+  <h3>If styling main document with classes from dom modules imported by other dom-module works, you should see that horizontal layout bellow works</h3>
+
+  <div class="layout horizontal">
+    <div class="item">Lorem ipsum</div>
+    <div class="item">Lorem ipsum</div>
+    <div class="item">Lorem ipsum</div>
+  </div>
+
+  <script> document.addEventListener('WebComponentsReady', function() {
+      console.log('webcomponents ready');
+      var verVal = document.getElementById('verVal');
+      verVal.textContent = Polymer.version;
+    }); </script>
+</body>
+
+</html>

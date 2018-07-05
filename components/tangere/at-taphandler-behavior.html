@@ -82,8 +82,16 @@
       this.toggleClass("expanded", data == "expanded", this.$.container);
       this.toggleClass("collapsed", data == "collapsed", this.$.container);
 
-      this.fire('content-changed', this, { bubbles: true });
+      this.async(function () {
 
+        var dashboard = this.$.container;
+        if (this.$.container.tagName.toUpperCase() != "AT-CORE-DASHBOARD") dashboard = dashboard.querySelector('at-core-dashboard');
+        if (dashboard) { 
+          dashboard.refresh();
+        }
+      }, 100);
+
+      this.fire('content-changed', this, { bubbles: true });
     },
 
     _dialog: function (data) {

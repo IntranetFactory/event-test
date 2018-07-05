@@ -1,0 +1,50 @@
+<link rel="import" href="../../tangere/tangere.html" />
+<dom-module id="slot-in-1x-elt">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+
+        border: 1px dotted blueviolet;
+      }
+
+      .content-container ::content>* {
+        margin: 4px;
+        padding: 4px;
+        border: 1px dashed orange;
+      }
+
+      .content-container ::slotted(*) {
+        margin: 4px;
+        padding: 4px;
+        border: 1px dashed olivedrab;
+      }
+    </style>
+
+    <h4>Polymer version is {{version}}</h4>
+
+    <div>Content works in Polymer 1.x. Elements are displayed bellow</div>
+    <div class="content-container">
+      <content></content>
+    </div>
+
+    <div>Slot and ::slotted works in Polymer 2.x. Elements are displayed bellow</div>
+    <div class="content-container">
+      <slot name="slot1"></slot>
+    </div>
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: "slot-in-1x-elt",
+    properties: {
+      version: {
+        type: String,
+        value: Polymer.version.toString()
+      }
+    },
+    ready: function() {
+    }
+  });
+</script>

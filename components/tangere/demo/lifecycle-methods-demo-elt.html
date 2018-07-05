@@ -1,0 +1,158 @@
+<link rel="import" href="../../tangere/tangere.html" />
+
+<dom-module id="lifecycle-methods-demo-elt">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+    </style>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "lifecycle-methods-demo-elt",
+    properties: {
+      prop1: {
+        type: String,
+        value: '',
+        observer: '_prop1Changed'
+      },
+      prop2: {
+        type: Number,
+        value: '',
+        observer: '_prop2Changed'
+      },
+      prop3: {
+        type: Boolean,
+        value: false,
+        observer: '_prop3Changed'
+      },
+      prop4: {
+        type: Object,
+        value: function() {
+          return {};
+        },
+        observer: '_prop4Changed'
+      },
+      prop5: {
+        type: Array,
+        value: function() {
+          return [];
+        },
+        observer: '_prop5Changed'
+      }
+    },
+
+    _privateProp1: '',
+    _privateProp2: '',
+    _privateProp3: '',
+
+    observers: [
+      '_initialize(prop1, prop2, prop3, prop4.*, prop5.*)'
+    ],
+
+    _printValues: function(echoElt) {
+      try {
+        var values = {
+          prop1: this.prop1,
+          prop2: this.prop2,
+          prop3: this.prop3,
+          prop4: this.prop4,
+          prop5: this.prop5,
+          privateProp1: this._privateProp1,
+          privateProp2: this._privateProp2,
+          privateProp3: this._privateProp3,
+        };
+        var valuesJson = JSON.stringify(values);
+        var text = `Property values: ${valuesJson}`;
+        console.log(text);
+      
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
+    _printShadowDomStatus: function() {
+      var shadyRootExists = this.shadyRoot ? 'exists' : 'does not exist'; 
+      var text = `shadyRoot ${shadyRootExists}`;
+      console.log(text);
+
+      var shadowDomExits = this.shadowRoot ? 'exists' : 'does not exist';
+      var text = `shadowRoot ${shadowDomExits}`;
+      console.log(text);
+    },
+
+    _prop1Changed: function(newValue, oldValue) {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} prop1Changed called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+
+    _prop2Changed: function(newValue, oldValue) {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} prop2Changed called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+
+    _prop3Changed: function(newValue, oldValue) {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} prop3Changed called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+
+    _prop4Changed: function(newValue, oldValue) {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} prop4Changed called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+
+    _prop5Changed: function(newValue, oldValue) {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} prop5Changed called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+
+    _initialize(prop1, prop2, prop3, prop4Splices, prop5Splices) {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} initialize called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+
+    created: function() {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} created called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+
+    ready: function() {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} ready called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+
+    attached: function() {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} attached called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+
+    detached: function() {
+      var text = `Polymer.version ${Polymer.version}: ${this.is} detached called`;
+      console.log(text);
+      this._printValues();
+      this._printShadowDomStatus();
+    },
+  });
+</script>

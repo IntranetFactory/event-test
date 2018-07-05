@@ -1,0 +1,58 @@
+<link rel="import" href="../../tangere/tangere.html" />
+
+<dom-module id="property-changed-handlers-elt">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+    </style>
+    <slot></slot>
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "property-changed-handlers-elt",
+    properties: {
+      prop1: {
+        type: String,
+        value: '',
+        observer: '_prop1Changed'
+      },
+      prop2: {
+        type: Number,
+        value: 0,
+        observer: '_prop2Changed'
+      },
+      prop3: {
+        type: Boolean,
+        value: false,
+        observer: '_prop3Changed'
+      },
+    },
+    
+    ready: function() {
+    },
+
+    _echo: function(text) {
+      console.log(text);
+    },
+
+    _prop1Changed: function(newValue, oldValue) {
+      var text = `${this.is}: is ${this.isConnected ? "attached" : "detached" }. Property prop1 value is ${newValue}`;
+      this._echo(text);
+    },
+    
+    _prop2Changed: function(newValue, oldValue) {
+      var text = `${this.is}: is ${this.isConnected ? "attached" : "detached" }. Property prop1 value is ${newValue}`;
+      this._echo(text);
+    },
+    
+    _prop3Changed: function(newValue, oldValue) {
+      var text = `${this.is}: is ${this.isConnected ? "attached" : "detached" }. Property prop1 value is ${newValue}`;
+      this._echo(text);
+    }
+  });
+</script>

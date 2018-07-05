@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>property changed handlers</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="property-changed-handlers-elt.html">
+</head>
+
+<body>
+  <h3>Property changed handlers</h3>
+
+  <div id="echo">
+
+  </div>
+
+  <script> 
+    document.addEventListener('WebComponentsReady', function() {
+      var echo = document.getElementById('echo');
+
+      function addText(text) {
+        var p = document.createElement('p');
+        p.textContent = text;
+        echo.appendChild(p);
+      }
+
+      addText(`Polymer version: ${Polymer.version}`);
+
+      addText('Element is created but not attached');
+      var elt = document.createElement('property-changed-handlers-elt');
+      elt._echo = function(text) {
+        addText(text);
+      }
+
+      addText('Prop1 set to "lorem ipsum" ');
+      elt.prop1 = "lorem ipsum";
+
+      addText('Prop2 set to 42');
+      elt.prop2 = 42;
+
+      addText('Prop3 set to true');
+      elt.prop3 = true;
+
+      addText('Element is created and attached');
+
+      elt1 = document.createElement('property-changed-handlers-elt');
+      elt1._echo = function(text) {
+        addText(text);
+      }
+      document.body.appendChild(elt1);
+
+      addText('Prop1 set to "lorem ipsum" ');
+      elt1.prop1 = "lorem ipsum";
+
+      addText('Prop2 set to 42');
+      elt1.prop2 = 42;
+
+      addText('Prop3 set to true');
+      elt1.prop3 = true;
+
+    });
+  </script>
+</body>
+
+</html>

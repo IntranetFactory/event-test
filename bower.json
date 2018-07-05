@@ -3,8 +3,11 @@
   "private": true,
   "dependencies": {
     "webcomponentsjs": "webcomponents/webcomponentsjs#1.1.0",
-    "polymer": "polymer/polymer#2.4.0",
+    "polymer": "Polymer/polymer#^2.0.0",
     "tangere": "TangereJs/tangere#master"
   },
+  "resolutions": {
+	"polymer": "^2.0.0"
+  },  
   "version": "0.1.0.0"
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>dom-if exists demo</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <link rel="import" href="slot-in-1x-elt.html">
+</head>
+
+<body>
+  <h3>Content vs slot demo</h3>
+  
+  <slot-in-1x-elt>
+    <div>Content Lorem ipsum 1</div>
+    <div>Content Lorem ipsum 2</div>
+    <div>Content Lorem ipsum 3</div>
+    <div>Content Lorem ipsum 4</div>
+    <div>Content Lorem ipsum 5</div>
+
+    <div slot="slot1">Slotted Lorem ipsum 1</div>
+    <div slot="slot1">Slotted Lorem ipsum 2</div>
+    <div slot="slot1">Slotted Lorem ipsum 3</div>
+    <div slot="slot1">Slotted Lorem ipsum 4</div>
+    <div slot="slot1">Slotted Lorem ipsum 5</div>
+  </slot-in-1x-elt>
+
+  <script> document.addEventListener('WebComponentsReady', function() { 
+    console.log('    webcomponents ready');
+    
+  }); </script>
+</body>
+
+</html>
