@@ -10,19 +10,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="mixin.html">
 <link rel="import" href="async.html">
 
-<script>
-(function () {
+<script>(function () {
   'use strict';
-
   /**
    * @summary Collapse multiple callbacks into one invocation after a timer.
    * @memberof Polymer
    */
 
-  var Debouncer = function () {
+  var Debouncer =
+  /*#__PURE__*/
+  function () {
     function Debouncer() {
       babelHelpers.classCallCheck(this, Debouncer);
-
       this._asyncModule = null;
       this._callback = null;
       this._timer = null;
@@ -39,7 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     babelHelpers.createClass(Debouncer, [{
-      key: 'setConfig',
+      key: "setConfig",
       value: function setConfig(asyncModule, callback) {
         var _this = this;
 
@@ -47,6 +46,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this._callback = callback;
         this._timer = this._asyncModule.run(function () {
           _this._timer = null;
+
           _this._callback();
         });
       }
@@ -57,10 +57,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'cancel',
+      key: "cancel",
       value: function cancel() {
         if (this.isActive()) {
           this._asyncModule.cancel(this._timer);
+
           this._timer = null;
         }
       }
@@ -71,10 +72,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'flush',
+      key: "flush",
       value: function flush() {
         if (this.isActive()) {
           this.cancel();
+
           this._callback();
         }
       }
@@ -85,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'isActive',
+      key: "isActive",
       value: function isActive() {
         return this._timer != null;
       }
@@ -121,13 +123,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }], [{
-      key: 'debounce',
+      key: "debounce",
       value: function debounce(debouncer, asyncModule, callback) {
-        if (debouncer instanceof Debouncer) {
+        if (babelHelpers.instanceof(debouncer, Debouncer)) {
           debouncer.cancel();
         } else {
           debouncer = new Debouncer();
         }
+
         debouncer.setConfig(asyncModule, callback);
         return debouncer;
       }

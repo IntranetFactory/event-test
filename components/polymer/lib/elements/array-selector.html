@@ -10,10 +10,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../utils/mixin.html">
 <link rel="import" href="../utils/array-splice.html">
 
-<script>
-(function () {
+<script>(function () {
   'use strict';
-
   /**
    * Element mixin for recording dynamic associations between item paths in a
    * master `items` array and a `selected` array such that path changes to the
@@ -37,14 +35,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    */
 
   var ArraySelectorMixin = Polymer.dedupingMixin(function (superClass) {
-
     /**
      * @constructor
      * @extends {superClass}
      * @implements {Polymer_ElementMixin}
      */
     var elementBase = Polymer.ElementMixin(superClass);
-
     /**
      * @polymer
      * @mixinClass
@@ -52,14 +48,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @unrestricted
      */
 
-    var ArraySelectorMixin = function (_elementBase) {
+    var ArraySelectorMixin =
+    /*#__PURE__*/
+    function (_elementBase) {
       babelHelpers.inherits(ArraySelectorMixin, _elementBase);
       babelHelpers.createClass(ArraySelectorMixin, null, [{
-        key: 'properties',
+        key: "properties",
         get: function get() {
-
           return {
-
             /**
              * An array containing items from which selection will be made.
              */
@@ -106,21 +102,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               type: Boolean,
               value: false
             }
-
           };
         }
       }, {
-        key: 'observers',
+        key: "observers",
         get: function get() {
           return ['__updateSelection(multi, items.*)'];
         }
       }]);
 
       function ArraySelectorMixin() {
+        var _this;
+
         babelHelpers.classCallCheck(this, ArraySelectorMixin);
-
-        var _this = babelHelpers.possibleConstructorReturn(this, (ArraySelectorMixin.__proto__ || Object.getPrototypeOf(ArraySelectorMixin)).call(this));
-
+        _this = babelHelpers.possibleConstructorReturn(this, (ArraySelectorMixin.__proto__ || Object.getPrototypeOf(ArraySelectorMixin)).call(this));
         _this.__lastItems = null;
         _this.__lastMulti = null;
         _this.__selectedMap = null;
@@ -128,22 +123,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       babelHelpers.createClass(ArraySelectorMixin, [{
-        key: '__updateSelection',
+        key: "__updateSelection",
         value: function __updateSelection(multi, itemsInfo) {
           var path = itemsInfo.path;
+
           if (path == 'items') {
             // Case 1 - items array changed, so diff against previous array and
             // deselect any removed items and adjust selected indices
             var newItems = itemsInfo.base || [];
             var lastItems = this.__lastItems;
             var lastMulti = this.__lastMulti;
+
             if (multi !== lastMulti) {
               this.clearSelection();
             }
+
             if (lastItems) {
               var splices = Polymer.ArraySplice.calculateSplices(newItems, lastItems);
+
               this.__applySplices(splices);
             }
+
             this.__lastItems = newItems;
             this.__lastMulti = multi;
           } else if (itemsInfo.path == 'items.splices') {
@@ -155,24 +155,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             // item for that index if it was previously selected
             var part = path.slice('items.'.length);
             var idx = parseInt(part, 10);
+
             if (part.indexOf('.') < 0 && part == idx) {
               this.__deselectChangedIdx(idx);
             }
           }
         }
       }, {
-        key: '__applySplices',
+        key: "__applySplices",
         value: function __applySplices(splices) {
           var _this2 = this;
 
-          var selected = this.__selectedMap;
-          // Adjust selected indices and mark removals
+          var selected = this.__selectedMap; // Adjust selected indices and mark removals
 
           var _loop = function _loop(i) {
             var s = splices[i];
             selected.forEach(function (idx, item) {
-              if (idx < s.index) {
-                // no change
+              if (idx < s.index) {// no change
               } else if (idx >= s.index + s.removed.length) {
                 // adjust index
                 selected.set(item, idx + s.addedCount - s.removed.length);
@@ -181,8 +180,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 selected.set(item, -1);
               }
             });
+
             for (var j = 0; j < s.addedCount; j++) {
               var idx = s.index + j;
+
               if (selected.has(_this2.items[idx])) {
                 selected.set(_this2.items[idx], idx);
               }
@@ -191,10 +192,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           for (var i = 0; i < splices.length; i++) {
             _loop(i);
-          }
-          // Update linked paths
-          this.__updateLinks();
-          // Remove selected items that were removed from the items array
+          } // Update linked paths
+
+
+          this.__updateLinks(); // Remove selected items that were removed from the items array
+
+
           var sidx = 0;
           selected.forEach(function (idx, item) {
             if (idx < 0) {
@@ -203,6 +206,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               } else {
                 _this2.selected = _this2.selectedItem = null;
               }
+
               selected.delete(item);
             } else {
               sidx++;
@@ -210,13 +214,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         }
       }, {
-        key: '__updateLinks',
+        key: "__updateLinks",
         value: function __updateLinks() {
           var _this3 = this;
 
           this.__dataLinkedPaths = {};
+
           if (this.multi) {
             var sidx = 0;
+
             this.__selectedMap.forEach(function (idx) {
               if (idx >= 0) {
                 _this3.linkPaths('items.' + idx, 'selected.' + sidx++);
@@ -225,31 +231,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           } else {
             this.__selectedMap.forEach(function (idx) {
               _this3.linkPaths('selected', 'items.' + idx);
+
               _this3.linkPaths('selectedItem', 'items.' + idx);
             });
           }
         }
-
         /**
          * Clears the selection state.
          * @return {void}
          */
 
       }, {
-        key: 'clearSelection',
+        key: "clearSelection",
         value: function clearSelection() {
           // Unbind previous selection
-          this.__dataLinkedPaths = {};
-          // The selected map stores 3 pieces of information:
+          this.__dataLinkedPaths = {}; // The selected map stores 3 pieces of information:
           // key: items array object
           // value: items array index
           // order: selected array index
-          this.__selectedMap = new Map();
-          // Initialize selection
+
+          this.__selectedMap = new Map(); // Initialize selection
+
           this.selected = this.multi ? [] : null;
           this.selectedItem = null;
         }
-
         /**
          * Returns whether the item is currently selected.
          *
@@ -258,11 +263,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'isSelected',
+        key: "isSelected",
         value: function isSelected(item) {
           return this.__selectedMap.has(item);
         }
-
         /**
          * Returns whether the item is currently selected.
          *
@@ -271,18 +275,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'isIndexSelected',
+        key: "isIndexSelected",
         value: function isIndexSelected(idx) {
           return this.isSelected(this.items[idx]);
         }
       }, {
-        key: '__deselectChangedIdx',
+        key: "__deselectChangedIdx",
         value: function __deselectChangedIdx(idx) {
           var _this4 = this;
 
           var sidx = this.__selectedIndexForItemIndex(idx);
+
           if (sidx >= 0) {
             var i = 0;
+
             this.__selectedMap.forEach(function (idx, item) {
               if (sidx == i++) {
                 _this4.deselect(item);
@@ -291,14 +297,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
       }, {
-        key: '__selectedIndexForItemIndex',
+        key: "__selectedIndexForItemIndex",
         value: function __selectedIndexForItemIndex(idx) {
           var selected = this.__dataLinkedPaths['items.' + idx];
+
           if (selected) {
             return parseInt(selected.slice('selected.'.length), 10);
           }
         }
-
         /**
          * Deselects the given item if it is already selected.
          *
@@ -307,16 +313,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'deselect',
+        key: "deselect",
         value: function deselect(item) {
           var idx = this.__selectedMap.get(item);
+
           if (idx >= 0) {
             this.__selectedMap.delete(item);
-            var sidx = void 0;
+
+            var sidx;
+
             if (this.multi) {
               sidx = this.__selectedIndexForItemIndex(idx);
             }
+
             this.__updateLinks();
+
             if (this.multi) {
               this.splice('selected', sidx, 1);
             } else {
@@ -324,7 +335,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
           }
         }
-
         /**
          * Deselects the given index if it is already selected.
          *
@@ -333,11 +343,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'deselectIndex',
+        key: "deselectIndex",
         value: function deselectIndex(idx) {
           this.deselect(this.items[idx]);
         }
-
         /**
          * Selects the given item.  When `toggle` is true, this will automatically
          * deselect the item if already selected.
@@ -347,11 +356,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'select',
+        key: "select",
         value: function select(item) {
           this.selectIndex(this.items.indexOf(item));
         }
-
         /**
          * Selects the given index.  When `toggle` is true, this will automatically
          * deselect the item if already selected.
@@ -361,15 +369,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'selectIndex',
+        key: "selectIndex",
         value: function selectIndex(idx) {
           var item = this.items[idx];
+
           if (!this.isSelected(item)) {
             if (!this.multi) {
               this.__selectedMap.clear();
             }
+
             this.__selectedMap.set(item, idx);
+
             this.__updateLinks();
+
             if (this.multi) {
               this.push('selected', item);
             } else {
@@ -384,18 +396,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }(elementBase);
 
     return ArraySelectorMixin;
-  });
+  }); // export mixin
 
-  // export mixin
   Polymer.ArraySelectorMixin = ArraySelectorMixin;
-
   /**
    * @constructor
    * @extends {Polymer.Element}
    * @implements {Polymer_ArraySelectorMixin}
    */
-  var baseArraySelector = ArraySelectorMixin(Polymer.Element);
 
+  var baseArraySelector = ArraySelectorMixin(Polymer.Element);
   /**
    * Element implementing the `Polymer.ArraySelector` mixin, which records
    * dynamic associations between item paths in a master `items` array and a
@@ -419,19 +429,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    *   <template>
    *
    *     <div> Employee list: </div>
-   *     <template is="dom-repeat" id="employeeList" items="{{employees}}">
+   *     <dom-repeat id="employeeList" items="{{employees}}">
+   *       <template>
    *         <div>First name: <span>{{item.first}}</span></div>
-   *         <div>Last name: <span>{{item.last}}</span></div>
-   *         <button on-click="toggleSelection">Select</button>
-   *     </template>
+   *           <div>Last name: <span>{{item.last}}</span></div>
+   *           <button on-click="toggleSelection">Select</button>
+   *       </template>
+   *     </dom-repeat>
    *
    *     <array-selector id="selector" items="{{employees}}" selected="{{selected}}" multi toggle></array-selector>
    *
    *     <div> Selected employees: </div>
-   *     <template is="dom-repeat" items="{{selected}}">
+   *     <dom-repeat items="{{selected}}">
+   *       <template>
    *         <div>First name: <span>{{item.first}}</span></div>
    *         <div>Last name: <span>{{item.last}}</span></div>
-   *     </template>
+   *       </template>
+   *     </dom-repeat>
    *
    *   </template>
    *
@@ -439,20 +453,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * ```
    *
    * ```js
-   * Polymer({
-   *   is: 'employee-list',
-   *   ready() {
-   *     this.employees = [
-   *         {first: 'Bob', last: 'Smith'},
-   *         {first: 'Sally', last: 'Johnson'},
-   *         ...
-   *     ];
-   *   },
-   *   toggleSelection(e) {
-   *     let item = this.$.employeeList.itemForElement(e.target);
-   *     this.$.selector.select(item);
-   *   }
-   * });
+   *class EmployeeList extends Polymer.Element {
+   *  static get is() { return 'employee-list'; }
+   *  static get properties() {
+   *    return {
+   *      employees: {
+   *        value() {
+   *          return [
+   *            {first: 'Bob', last: 'Smith'},
+   *            {first: 'Sally', last: 'Johnson'},
+   *            ...
+   *          ];
+   *        }
+   *      }
+   *    };
+   *  }
+   *  toggleSelection(e) {
+   *    let item = this.$.employeeList.itemForElement(e.target);
+   *    this.$.selector.select(item);
+   *  }
+   *}
    * ```
    *
    * @polymer
@@ -464,7 +484,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    *   an output `selected` item or array based on calls to its selection API.
    */
 
-  var ArraySelector = function (_baseArraySelector) {
+  var ArraySelector =
+  /*#__PURE__*/
+  function (_baseArraySelector) {
     babelHelpers.inherits(ArraySelector, _baseArraySelector);
 
     function ArraySelector() {
@@ -473,8 +495,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     babelHelpers.createClass(ArraySelector, null, [{
-      key: 'is',
-
+      key: "is",
       // Not needed to find template; can be removed once the analyzer
       // can find the tag name from customElements.define call
       get: function get() {

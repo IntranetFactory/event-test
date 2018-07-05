@@ -8,24 +8,24 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="boot.html">
 
-<script>
-(function () {
-
-  'use strict';
-
-  // Microtask implemented using Mutation Observer
+<script>(function () {
+  'use strict'; // Microtask implemented using Mutation Observer
 
   var microtaskCurrHandle = 0;
   var microtaskLastHandle = 0;
   var microtaskCallbacks = [];
   var microtaskNodeContent = 0;
   var microtaskNode = document.createTextNode('');
-  new window.MutationObserver(microtaskFlush).observe(microtaskNode, { characterData: true });
+  new window.MutationObserver(microtaskFlush).observe(microtaskNode, {
+    characterData: true
+  });
 
   function microtaskFlush() {
     var len = microtaskCallbacks.length;
+
     for (var i = 0; i < len; i++) {
       var cb = microtaskCallbacks[i];
+
       if (cb) {
         try {
           cb();
@@ -36,10 +36,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     }
+
     microtaskCallbacks.splice(0, len);
     microtaskLastHandle += len;
   }
-
   /**
    * Module that provides a number of strategies for enqueuing asynchronous
    * tasks.  Each sub-module provides a standard `run(fn)` interface that returns a
@@ -51,8 +51,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @summary Module that provides a number of strategies for enqueuing asynchronous
    * tasks.
    */
-  Polymer.Async = {
 
+
+  Polymer.Async = {
     /**
      * Async interface wrapper around `setTimeout`.
      *
@@ -182,7 +183,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      *   timing.
      */
     microTask: {
-
       /**
        * Enqueues a function called at microtask timing.
        *
@@ -196,7 +196,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return microtaskCurrHandle++;
       },
 
-
       /**
        * Cancels a previously enqueued `microTask` callback.
        *
@@ -206,10 +205,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
       cancel: function cancel(handle) {
         var idx = handle - microtaskLastHandle;
+
         if (idx >= 0) {
           if (!microtaskCallbacks[idx]) {
             throw new Error('invalid async handle: ' + handle);
           }
+
           microtaskCallbacks[idx] = null;
         }
       }

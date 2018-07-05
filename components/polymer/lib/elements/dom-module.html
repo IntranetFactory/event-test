@@ -8,12 +8,12 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="../utils/boot.html">
 <link rel="import" href="../utils/resolve-url.html">
-<script>
-(function () {
+<script>(function () {
   'use strict';
 
   var modules = {};
   var lcModules = {};
+
   function findModule(id) {
     return modules[id] || lcModules[id.toLowerCase()];
   }
@@ -23,7 +23,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       console.warn('dom-module %s has style outside template', inst.id);
     }
   }
-
   /**
    * The `dom-module` element registers the dom it contains to the name given
    * by the module's id attribute. It provides a unified database of dom
@@ -51,7 +50,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @unrestricted
    */
 
-  var DomModule = function (_HTMLElement) {
+
+  var DomModule =
+  /*#__PURE__*/
+  function (_HTMLElement) {
     babelHelpers.inherits(DomModule, _HTMLElement);
 
     function DomModule() {
@@ -60,8 +62,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     babelHelpers.createClass(DomModule, [{
-      key: 'attributeChangedCallback',
-
+      key: "attributeChangedCallback",
 
       /**
        * @param {string} name Name of attribute.
@@ -74,7 +75,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.register();
         }
       }
-
       /**
        * The absolute URL of the original location of this `dom-module`.
        *
@@ -88,8 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'register',
-
+      key: "register",
 
       /**
        * Registers the dom-module at a given id. This method should only be called
@@ -100,18 +99,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
       value: function register(id) {
         id = id || this.id;
+
         if (id) {
-          this.id = id;
-          // store id separate from lowercased id so that
+          this.id = id; // store id separate from lowercased id so that
           // in all cases mixedCase id will stored distinctly
           // and lowercase version is a fallback
+
           modules[id] = this;
           lcModules[id.toLowerCase()] = this;
           styleOutsideTemplateCheck(this);
         }
       }
     }, {
-      key: 'assetpath',
+      key: "assetpath",
       get: function get() {
         // Don't override existing assetpath.
         if (!this.__assetpath) {
@@ -121,11 +121,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var url = Polymer.ResolveUrl.resolveUrl(this.getAttribute('assetpath') || '', owner.baseURI);
           this.__assetpath = Polymer.ResolveUrl.pathFromUrl(url);
         }
+
         return this.__assetpath;
       }
     }], [{
-      key: 'import',
-
+      key: "import",
 
       /**
        * Retrieves the element specified by the css `selector` in the module
@@ -138,15 +138,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       value: function _import(id, selector) {
         if (id) {
           var m = findModule(id);
+
           if (m && selector) {
             return m.querySelector(selector);
           }
+
           return m;
         }
+
         return null;
       }
     }, {
-      key: 'observedAttributes',
+      key: "observedAttributes",
       get: function get() {
         return ['id'];
       }
@@ -155,9 +158,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }(HTMLElement);
 
   DomModule.prototype['modules'] = modules;
+  customElements.define('dom-module', DomModule); // export
 
-  customElements.define('dom-module', DomModule);
-
-  // export
   Polymer.DomModule = DomModule;
 })();</script>

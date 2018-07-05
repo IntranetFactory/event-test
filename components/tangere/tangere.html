@@ -1,75 +1,67 @@
 /* loads fixed and extented Polymer version -- always load Tangere.html instead of Polymer.html in all Tangere Apps */
-<script>
-  var useNativeCSSProperties = true;
-  if (navigator.appVersion.indexOf('Edge') > -1) useNativeCSSProperties = false;
-  Polymer = { lazyRegister: true, useNativeCSSProperties: useNativeCSSProperties };
-</script> 
+<script>var useNativeCSSProperties = true; // if (navigator.appVersion.indexOf('Edge') > -1) useNativeCSSProperties = false;
+
+Polymer = {
+  lazyRegister: true,
+  useNativeCSSProperties: useNativeCSSProperties
+};</script> 
 <link rel="import" href="../polymer/polymer.html">
 
 <!-- include global utility libs -->
 <!-- <script src="../moment/moment.js"></script> -->
 <script src="cookies.js"></script>
 
-<script>
-  (function (scope) {
+<script>(function (scope) {
+  // globals
+  Tangere = window.Tangere || {};
+  Tangere.behaviors = Tangere.behaviors || {};
+  Tangere.config = Tangere.config || {};
+  Tangere.session = Tangere.session || {};
+  Tangere.session.temp = Tangere.session.temp || {};
+  Tangere.session.user = Tangere.session.user || {};
+  Tangere.session.location = window.location; // browser detection 
 
-    // globals
-    Tangere = window.Tangere || {};
-    Tangere.behaviors = Tangere.behaviors || {};
-    Tangere.config = Tangere.config || {};
-    Tangere.session = Tangere.session || {};
-    Tangere.session.temp = Tangere.session.temp || {};
-    Tangere.session.user = Tangere.session.user || {};
-    Tangere.session.location = window.location;
+  Tangere.session.browser = Tangere.session.browser || _getBrowser();
 
-    // browser detection 
-    Tangere.session.browser = Tangere.session.browser || _getBrowser();
+  function _getBrowser() {
+    var browser = {};
+    var ua = navigator.userAgent;
+    browser.android = !!ua.match(/Android/i);
+    browser.ios = !!ua.match(/iPhone|iPod|iPad/i);
+    browser.mobile = browser.android || browser.ios; // small device is seen as mobile (e.g. extension)
 
-    function _getBrowser() {
-      var browser = {};
-      var ua = navigator.userAgent;
+    if (window.innerWidth < 500) browser.mobile = true;
+    browser.desktop = !browser.mobile; // running in an extension - currently only indirectly detectable      
 
-      browser.android = !!ua.match(/Android/i);
-      browser.ios = !!ua.match(/iPhone|iPod|iPad/i)
-      browser.mobile = browser.android || browser.ios;
-           
-      // small device is seen as mobile (e.g. extension)
-      if (window.innerWidth < 500) browser.mobile = true;
-      browser.desktop = !browser.mobile;
-
-      // running in an extension - currently only indirectly detectable      
-      browser.extension = (window.location.pathname.indexOf("/Extension") == 0);
-
-      return browser;
-    }
+    browser.extension = window.location.pathname.indexOf("/Extension") == 0;
+    return browser;
+  } // disable async in chrome as a workaround for https://github.com/Polymer/polymer/issues/2522 
 
 
-    // disable async in chrome as a workaround for https://github.com/Polymer/polymer/issues/2522 
-    var _importHref = scope.Base.importHref;
-    scope.Base.importHref = function (u, s, e, a) {      
-      if (scope.Settings.useNativeCustomElements) a = false;     
-      return _importHref.call(this,u,s,e,a);
-    }
-  
+  var _importHref = scope.Base.importHref;
 
-    // fix template nesting bug by copying template node.content to dom node._content after import
-    scope.Base.instanceTemplate = function (template) {
-      var dom = document.importNode(template._content || template.content, true);
-      fixImportedNodes(template._content || template.content, dom);
-      return dom;
-    }
+  scope.Base.importHref = function (u, s, e, a) {
+    if (scope.Settings.useNativeCustomElements) a = false;
+    return _importHref.call(this, u, s, e, a);
+  }; // fix template nesting bug by copying template node.content to dom node._content after import
 
-    function fixImportedNodes(node, orig) {
-      var a, i, il;
 
-      switch (node.nodeType) {
+  scope.Base.instanceTemplate = function (template) {
+    var dom = document.importNode(template._content || template.content, true);
+    fixImportedNodes(template._content || template.content, dom);
+    return dom;
+  };
 
+  function fixImportedNodes(node, orig) {
+    var a, i, il;
+
+    switch (node.nodeType) {
       case document.ELEMENT_NODE:
         if (node.tagName == "TEMPLATE") {
           orig._content = node.content; // copying to ._content as updating .content fails in Safari
-        }
+        } // handle childes recursively
 
-        // handle childes recursively
+
         if (node.childNodes && node.childNodes.length > 0) {
           for (i = 0, il = node.childNodes.length; i < il; i++) {
             fixImportedNodes(node.childNodes[i], orig.childNodes[i]);
@@ -80,216 +72,225 @@
         for (i = 0, il = node.childNodes.length; i < il; ++i) {
           fixImportedNodes(node.childNodes[i], orig.childNodes[i]);
         }
-      }
+
     }
+  }
 
-    Tangere.behavior = {};
+  Tangere.behavior = {};
+  Tangere.behavior.handleLink = {
+    ignoreEvent: function ignoreEvent(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    },
+    handleLink: function handleLink(e) {
+      // allow childs to set a different target url, if not provided use default url
+      var href = "",
+          el;
 
-    Tangere.behavior.handleLink = {
+      if (!href && e.url) {
+        href = e.url;
+        el = e;
+      }
 
-      ignoreEvent: function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      },
-      handleLink: function (e) {
-        
-        // allow childs to set a different target url, if not provided use default url
-        var href = "", el;
+      ;
 
-        if (!href && e.url) {
-          href = e.url;
-          el = e
-        };
+      if (!href && e.currentTarget && e.currentTarget.href) {
+        href = e.currentTarget.href;
+        el = e.currentTarget;
+      }
 
-        if (!href && e.currentTarget && e.currentTarget.href) {
-          href = e.currentTarget.href;
-          el = e.currentTarget
-        };
+      ;
 
-        if (!href && e.currentTarget.attributes && e.currentTarget.attributes.url) {
-          href = e.currentTarget.attributes.url.value;
-          el = e.currentTarget
-        };
+      if (!href && e.currentTarget.attributes && e.currentTarget.attributes.url) {
+        href = e.currentTarget.attributes.url.value;
+        el = e.currentTarget;
+      }
 
-        if (!href && e.detail && e.detail.sourceEvent && e.detail.sourceEvent.currentTarget && e.detail.sourceEvent.currentTarget.href) {
-          href = e.detail.sourceEvent.currentTarget.href;
-          el = e.detail.sourceEvent.currentTarget
-        };
+      ;
 
-        if (!href) console.log("handLink Url missing");
+      if (!href && e.detail && e.detail.sourceEvent && e.detail.sourceEvent.currentTarget && e.detail.sourceEvent.currentTarget.href) {
+        href = e.detail.sourceEvent.currentTarget.href;
+        el = e.detail.sourceEvent.currentTarget;
+      }
 
-        // highlight current element
-        if (el) {
-          Polymer.dom(el).classList.add("active");
-          setTimeout(function () {
-            Polymer.dom(el).classList.remove("active");
-          }.bind(this), 300);
+      ;
+      if (!href) console.log("handLink Url missing"); // highlight current element
+
+      if (el) {
+        Polymer.dom(el).classList.add("active");
+        setTimeout(function () {
+          Polymer.dom(el).classList.remove("active");
+        }.bind(this), 300);
+      } // when running in IFrame and we also have a direct link to the external url open it
+
+
+      if (el && el.getAttribute("xref")) {
+        // running in embeded mode
+        if (window.parentIFrame != null) {
+          href = el.getAttribute("xref");
+          window.parentIFrame.sendMessage({
+            cmd: "navigate-to",
+            url: href
+          });
+          return;
+        } // chrome extension -> open in new tab
+
+
+        if (window.chrome && !!chrome.runtime.id) {
+          href = el.getAttribute("xref");
+          window.open(href, '_blank');
+          return;
         }
+      } // convert absolute link to app to relative
 
 
+      if (href.indexOf(window.location.origin + window.location.pathname + "#") == 0) {
+        href = href.substring(href.indexOf("#"));
+      }
 
-        // when running in IFrame and we also have a direct link to the external url open it
-        if (el && el.getAttribute("xref")) {
-
-          // running in embeded mode
-          if (window.parentIFrame != null) {
-            href = el.getAttribute("xref");
-            window.parentIFrame.sendMessage({
-              cmd: "navigate-to",
-              url: href
-            });
-            return;
-          }
-
-          // chrome extension -> open in new tab
-          if (window.chrome && !!chrome.runtime.id) {
-            href = el.getAttribute("xref");
-            window.open(href, '_blank');
-            return;
-          }
+      if (href) {
+        if (href.indexOf("#") == 0) {
+          Polymer.signal("busy-start-async");
+          Polymer.signal("navigate-to", href);
+        } else {
+          window.open(href, '_blank');
         }
+      }
 
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+  }; // Tangere.throttle
+  // Returns a function, that, when invoked, will only be triggered at most once
+  // during a given window of time. Normally, the throttled function will run
+  // as much as it can, without ever going more than once per `wait` duration;
+  // but if you'd like to disable the execution on the leading edge, pass
+  // `{leading: false}`. To disable execution on the trailing edge, ditto.
+  // *todo* create a wrapper with a job name similar to debounce, allowing cancel
 
-        // convert absolute link to app to relative
-        if (href.indexOf(window.location.origin + window.location.pathname + "#") == 0) {
-          href = href.substring(href.indexOf("#"));
-        }
+  Tangere._throttle = function (func, wait, options) {
+    var context, args, result;
+    var timeout = null;
+    var previous = 0;
+    if (!options) options = {};
 
-        if (href) {
-          if (href.indexOf("#") == 0) {
-
-            Polymer.signal("busy-start-async");
-            Polymer.signal("navigate-to", href);
-
-          } else {
-            window.open(href, '_blank');
-          }
-        }
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-      },
+    var later = function later() {
+      previous = options.leading === false ? 0 : Date.now();
+      timeout = null;
+      result = func.apply(context, args);
+      if (!timeout) context = args = null;
     };
 
-    // Tangere.throttle
+    return function () {
+      var now = Date.now();
+      if (!previous && options.leading === false) previous = now;
+      var remaining = wait - (now - previous);
+      context = this;
+      args = arguments;
 
-    // Returns a function, that, when invoked, will only be triggered at most once
-    // during a given window of time. Normally, the throttled function will run
-    // as much as it can, without ever going more than once per `wait` duration;
-    // but if you'd like to disable the execution on the leading edge, pass
-    // `{leading: false}`. To disable execution on the trailing edge, ditto.
+      if (remaining <= 0 || remaining > wait) {
+        if (timeout) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
 
-    // *todo* create a wrapper with a job name similar to debounce, allowing cancel
-    Tangere._throttle = function(func, wait, options) {
-      var context, args, result;
-      var timeout = null;
-      var previous = 0;
-      if (!options) options = {};
-      var later = function () {
-        previous = options.leading === false ? 0 : Date.now();
-        timeout = null;
+        previous = now;
         result = func.apply(context, args);
         if (!timeout) context = args = null;
-      };
-      return function () {
-        var now = Date.now();
-        if (!previous && options.leading === false) previous = now;
-        var remaining = wait - (now - previous);
-        context = this;
-        args = arguments;
-        if (remaining <= 0 || remaining > wait) {
-          if (timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-          }
-          previous = now;
-          result = func.apply(context, args);
-          if (!timeout) context = args = null;
-        } else if (!timeout && options.trailing !== false) {
-          timeout = setTimeout(later, remaining);
+      } else if (!timeout && options.trailing !== false) {
+        timeout = setTimeout(later, remaining);
+      }
+
+      return result;
+    };
+  }; // -- global repository for languages
+
+
+  scope.atI18nLocales = Polymer.atI18nLocales || {
+    add: function add(localName, locale, translations) {
+      this[localName] = this[localName] || {};
+      this[localName][locale.toLowerCase()] = translations;
+    }
+  }; // In Polymer 2.x Polymer.Settings.useNativeShadow is undefined but Polymer.Settings.useShadow is true
+
+  var nativeShadow = Polymer.Settings.useNativeShadow || Polymer.Settings.useShadow;
+
+  scope.Base.scopeSubtree = function (container, shouldObserve) {
+    if (nativeShadow) {
+      return;
+    }
+
+    var self = this;
+
+    var scopify = function scopify(node) {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        // BUG 1. class attribute change
+        // we change the modification to class attribute to 
+        // var className = node.getAttribute('class');
+        // node.setAttribute('class', self._scopeElementClass(node, className));
+        // to modification to classList property
+        // StyleTransformer doens't exist in Polymer 2.x only 1.x
+        if (Polymer.StyleTransformer !== undefined) {
+          node.classList.add(Polymer.StyleTransformer.SCOPE_NAME);
+        } else {
+          // for Polymer 2.x where necessary add style-scope manually
+          node.classList.add('style-scope');
         }
-        return result;
-      };
-    };
-    // -- global repository for languages
-    scope.atI18nLocales = Polymer.atI18nLocales || {
 
-      add: function (localName, locale, translations) {
-        this[localName] = this[localName] || {};
-        this[localName][locale.toLowerCase()] = translations;
-      }
+        node.classList.add(self.is); // BUG 2. in shadyDom querySelectorAll returns children from shadyDOM
+        // and causes children from shadyDOM to get scoped with css from parent
+        // var n$ = node.querySelectorAll('*');
+        // solution is 
 
-    };
+        var n$ = Polymer.dom(node).children; // because Polymer.dom(...).children doesn't return elements from shadyDom
+        // if elements from shadyDom should be processed, then a call to 
+        // Polymer.dom(node.root).children should be used
 
-    var nativeShadow = Polymer.Settings.useNativeShadow;
-    
-    scope.Base.scopeSubtree = function (container, shouldObserve) {
-      if (nativeShadow) {
-        return;
-      }
-      var self = this;
-      var scopify = function (node) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
+        for (var i = 0, n; i < n$.length && (n = n$[i]); i++) {
           // BUG 1. class attribute change
           // we change the modification to class attribute to 
-          // var className = node.getAttribute('class');
-          // node.setAttribute('class', self._scopeElementClass(node, className));
-      
+          // className = n.getAttribute('class');
+          // n.setAttribute('class', self._scopeElementClass(n, className));
           // to modification to classList property
-          node.classList.add(Polymer.StyleTransformer.SCOPE_NAME);
-          node.classList.add(self.is);
-
-          // BUG 2. in shadyDom querySelectorAll returns children from shadyDOM
-          // and causes children from shadyDOM to get scoped with css from parent
-          // var n$ = node.querySelectorAll('*');
-          
-          // solution is 
-          var n$ = Polymer.dom(node).children;
-          // because Polymer.dom(...).children doesn't return elements from shadyDom
-          // if elements from shadyDom should be processed, then a call to 
-          // Polymer.dom(node.root).children should be used
-          
-          for (var i = 0, n; i < n$.length && (n = n$[i]); i++) {
-            // BUG 1. class attribute change
-            // we change the modification to class attribute to 
-            // className = n.getAttribute('class');
-            // n.setAttribute('class', self._scopeElementClass(n, className));
-
-            // to modification to classList property
+          // StyleTransformer doens't exist in Polymer 2.x only 1.x
+          if (Polymer.StyleTransformer !== undefined) {
             n.classList.add(Polymer.StyleTransformer.SCOPE_NAME);
-            n.classList.add(self.is);
-            
-            // BUG 2. subree traversal fix
-            // Polymer.dom(...).children only returns nodes direct children, it doesn't
-            // return the whole subtree tree. We traverse and scope the subree tree manually
-            var nChilds = Polymer.dom(n).children;
-            nChilds.forEach(function(nChild) { 
-              scopify(nChild);
-            });
+          } else {
+            // for Polymer 2.x where necessary add style-scope manually
+            n.classList.add('style-scope');
           }
+
+          n.classList.add(self.is); // BUG 2. subree traversal fix
+          // Polymer.dom(...).children only returns nodes direct children, it doesn't
+          // return the whole subtree tree. We traverse and scope the subree tree manually
+
+          var nChilds = Polymer.dom(n).children;
+          Array.prototype.forEach.call(nChilds, function (nChild) {
+            scopify(nChild);
+          });
         }
-      };
-      
-      scopify(container);
-      
-      if (shouldObserve) {
-        var mo = new MutationObserver(function (mxns) {
-          for (var i = 0, m; i < mxns.length && (m = mxns[i]); i++) {
-            if (m.addedNodes) {
-              for (var j = 0; j < m.addedNodes.length; j++) {
-                scopify(m.addedNodes[j]);
-              }
-            }
-          }
-        });
-        mo.observe(container, {
-          childList: true,
-          subtree: true
-        });
-        return mo;
       }
     };
 
-  })(Polymer);
-</script>
+    scopify(container);
+
+    if (shouldObserve) {
+      var mo = new MutationObserver(function (mxns) {
+        for (var i = 0, m; i < mxns.length && (m = mxns[i]); i++) {
+          if (m.addedNodes) {
+            for (var j = 0; j < m.addedNodes.length; j++) {
+              scopify(m.addedNodes[j]);
+            }
+          }
+        }
+      });
+      mo.observe(container, {
+        childList: true,
+        subtree: true
+      });
+      return mo;
+    }
+  };
+})(Polymer);</script>

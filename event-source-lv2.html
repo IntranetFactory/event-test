@@ -1,5 +1,5 @@
 <link rel="import" href="components/tangere/tangere.html">
-<link rel="import" href="event-source.html" />
+<link rel="import" href="event-source.html">
 
 <dom-module id="event-source-lv2">
   <template>
@@ -10,69 +10,52 @@
       }
     </style>
 
-    <event-source 
-      id="eventSource_depth2"
-      label="[[label]]"
-      placeholder="[[placeholder]]"
-      value="[[value]]"
-      dispatch-method="[[dispatchMethod]]"
-    ></event-source>
+    <event-source id="eventSource_depth2" label="[[label]]" placeholder="[[placeholder]]" value="[[value]]" dispatch-method="[[dispatchMethod]]"></event-source>
   </template>
 </dom-module>
 
-<script>
-  Polymer({
-    is: 'event-source-lv2',
-    properties: {
-
-      label: {
-        type: String,
-        value: '',
-        title: 'Label'
-      },
-
-      placeholder: {
-        type: String,
-        value: '',
-        title: 'Placeholder text'
-      },
-
-      value: {
-        type: String,
-        value: '',
-        title: 'Value'
-      },
-
-      dispatchMethod: {
-        type: String,
-        value: 'event'
-      }
+<script>Polymer({
+  is: 'event-source-lv2',
+  properties: {
+    label: {
+      type: String,
+      value: '',
+      title: 'Label'
     },
-
-    listeners: {
-      'click': '_hostClicked',
-      'tap': '_hostTapped',
-      'change': '_hostChange'
+    placeholder: {
+      type: String,
+      value: '',
+      title: 'Placeholder text'
     },
-
-    _hostClicked: function(event) {
-      var msg = [ this.id, "(", this.is, ")", " click handler called." ].join("");
-      console.log(msg);
-      window.logToIndexPage(msg);
+    value: {
+      type: String,
+      value: '',
+      title: 'Value'
     },
-
-    _hostTapped: function(event) {
-      var msg = [ this.id, "(", this.is, ")", " tap handler called." ].join("");
-      console.log(msg);
-      window.logToIndexPage(msg);
-    },
-
-    _hostChange: function(event) {
-      var msg = [ this.id, "(", this.is, ")", " change handler called." ].join("");
-      console.log(msg);
-      window.logToIndexPage(msg);
-    },
-
-    ready: function() { }
-  });
-</script>
+    dispatchMethod: {
+      type: String,
+      value: 'event'
+    }
+  },
+  listeners: {
+    'click': '_hostClicked',
+    'tap': '_hostTapped',
+    'change': '_hostChange'
+  },
+  _hostClicked: function _hostClicked(event) {
+    var msg = [this.id, "(", this.is, ")", " click handler called."].join("");
+    console.log(msg);
+    window.logToIndexPage(msg);
+  },
+  _hostTapped: function _hostTapped(event) {
+    var msg = [this.id, "(", this.is, ")", " tap handler called."].join("");
+    console.log(msg);
+    window.logToIndexPage(msg);
+  },
+  _hostChange: function _hostChange(event) {
+    var msg = [this.id, "(", this.is, ")", " change handler called."].join("");
+    console.log(msg);
+    window.logToIndexPage(msg);
+  },
+  ready: function ready() {}
+});</script>

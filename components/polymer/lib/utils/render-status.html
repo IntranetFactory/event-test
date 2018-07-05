@@ -8,9 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="boot.html">
 
-<script>
-(function () {
-
+<script>(function () {
   'use strict';
 
   var scheduled = false;
@@ -18,12 +16,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   var afterRenderQueue = [];
 
   function schedule() {
-    scheduled = true;
-    // before next render
+    scheduled = true; // before next render
+
     requestAnimationFrame(function () {
       scheduled = false;
-      flushQueue(beforeRenderQueue);
-      // after the render
+      flushQueue(beforeRenderQueue); // after the render
+
       setTimeout(function () {
         runQueue(afterRenderQueue);
       });
@@ -46,6 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var context = info[0];
     var callback = info[1];
     var args = info[2];
+
     try {
       callback.apply(context, args);
     } catch (e) {
@@ -60,9 +59,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       flushQueue(beforeRenderQueue);
       flushQueue(afterRenderQueue);
     }
+
     scheduled = false;
   }
-
   /**
    * Module for scheduling flushable pre-render and post-render tasks.
    *
@@ -70,8 +69,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @memberof Polymer
    * @summary Module for scheduling flushable pre-render and post-render tasks.
    */
-  Polymer.RenderStatus = {
 
+
+  Polymer.RenderStatus = {
     /**
      * Enqueues a callback which will be run before the next render, at
      * `requestAnimationFrame` timing.
@@ -92,6 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       if (!scheduled) {
         schedule();
       }
+
       beforeRenderQueue.push([context, callback, args]);
     },
 
@@ -114,6 +115,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       if (!scheduled) {
         schedule();
       }
+
       afterRenderQueue.push([context, callback, args]);
     },
 
@@ -125,6 +127,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @return {void}
      */
     flush: flush
-
   };
 })();</script>

@@ -8,16 +8,15 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="../mixins/mutable-data.html">
 
-<script>
-(function () {
+<script>(function () {
   'use strict';
 
-  var mutablePropertyChange = void 0;
+  var mutablePropertyChange;
   /** @suppress {missingProperties} */
+
   (function () {
     mutablePropertyChange = Polymer.MutableData._mutablePropertyChange;
   })();
-
   /**
    * Legacy element behavior to skip strict dirty-checking for objects and arrays,
    * (always consider them to be "dirty") for use on legacy API Polymer elements.
@@ -56,8 +55,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @summary Behavior to skip strict dirty-checking for objects and
    *   arrays
    */
-  Polymer.MutableDataBehavior = {
 
+
+  Polymer.MutableDataBehavior = {
     /**
      * Overrides `Polymer.PropertyEffects` to provide option for skipping
      * strict equality checking for Objects and Arrays.
@@ -79,7 +79,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return mutablePropertyChange(this, property, value, old, true);
     }
   };
-
   /**
    * Legacy element behavior to add the optional ability to skip strict
    * dirty-checking for objects and arrays (always consider them to be
@@ -120,8 +119,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @summary Behavior to optionally skip strict dirty-checking for objects and
    *   arrays
    */
-  Polymer.OptionalMutableDataBehavior = {
 
+  Polymer.OptionalMutableDataBehavior = {
     properties: {
       /**
        * Instance-level flag for configuring the dirty-checking strategy

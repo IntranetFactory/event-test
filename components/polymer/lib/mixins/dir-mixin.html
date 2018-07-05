@@ -8,36 +8,36 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="property-accessors.html">
 
-<script>
-(function () {
+<script>(function () {
   'use strict';
 
   var HOST_DIR = /:host\(:dir\((ltr|rtl)\)\)/g;
   var HOST_DIR_REPLACMENT = ':host([dir="$1"])';
-
   var EL_DIR = /([\s\w-#\.\[\]\*]*):dir\((ltr|rtl)\)/g;
   var EL_DIR_REPLACMENT = ':host([dir="$2"]) $1';
-
   /**
    * @type {!Array<!Polymer_DirMixin>}
    */
+
   var DIR_INSTANCES = [];
-
   /** @type {MutationObserver} */
-  var observer = null;
 
+  var observer = null;
   var DOCUMENT_DIR = '';
 
   function getRTL() {
     DOCUMENT_DIR = document.documentElement.getAttribute('dir');
   }
-
   /**
    * @param {!Polymer_DirMixin} instance Instance to set RTL status on
    */
+
+
   function setRTL(instance) {
     if (!instance.__autoDirOptOut) {
-      var el = /** @type {!HTMLElement} */instance;
+      var el =
+      /** @type {!HTMLElement} */
+      instance;
       el.setAttribute('dir', DOCUMENT_DIR);
     }
   }
@@ -45,6 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   function updateDirection() {
     getRTL();
     DOCUMENT_DIR = document.documentElement.getAttribute('dir');
+
     for (var i = 0; i < DIR_INSTANCES.length; i++) {
       setRTL(DIR_INSTANCES[i]);
     }
@@ -55,7 +56,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       updateDirection();
     }
   }
-
   /**
    * Element class mixin that allows elements to use the `:dir` CSS Selector to have
    * text direction specific styling.
@@ -77,43 +77,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @appliesMixin Polymer.PropertyAccessors
    * @memberof Polymer
    */
-  Polymer.DirMixin = Polymer.dedupingMixin(function (base) {
 
+
+  Polymer.DirMixin = Polymer.dedupingMixin(function (base) {
     if (!observer) {
       getRTL();
       observer = new MutationObserver(updateDirection);
-      observer.observe(document.documentElement, { attributes: true, attributeFilter: ['dir'] });
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['dir']
+      });
     }
-
     /**
      * @constructor
      * @extends {base}
      * @implements {Polymer_PropertyAccessors}
      */
-    var elementBase = Polymer.PropertyAccessors(base);
 
+
+    var elementBase = Polymer.PropertyAccessors(base);
     /**
      * @polymer
      * @mixinClass
      * @implements {Polymer_DirMixin}
      */
 
-    var Dir = function (_elementBase) {
+    var Dir =
+    /*#__PURE__*/
+    function (_elementBase) {
       babelHelpers.inherits(Dir, _elementBase);
       babelHelpers.createClass(Dir, null, [{
-        key: '_processStyleText',
-
+        key: "_processStyleText",
 
         /**
          * @override
          * @suppress {missingProperties} Interfaces in closure do not inherit statics, but classes do
          */
         value: function _processStyleText(cssText, baseURI) {
-          cssText = babelHelpers.get(Dir.__proto__ || Object.getPrototypeOf(Dir), '_processStyleText', this).call(this, cssText, baseURI);
+          cssText = babelHelpers.get(Dir.__proto__ || Object.getPrototypeOf(Dir), "_processStyleText", this).call(this, cssText, baseURI);
           cssText = this._replaceDirInCssText(cssText);
           return cssText;
         }
-
         /**
          * Replace `:dir` in the given CSS text
          *
@@ -122,28 +126,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: '_replaceDirInCssText',
+        key: "_replaceDirInCssText",
         value: function _replaceDirInCssText(text) {
           var replacedText = text;
           replacedText = replacedText.replace(HOST_DIR, HOST_DIR_REPLACMENT);
           replacedText = replacedText.replace(EL_DIR, EL_DIR_REPLACMENT);
+
           if (text !== replacedText) {
             this.__activateDir = true;
           }
+
           return replacedText;
         }
       }]);
 
       function Dir() {
-        babelHelpers.classCallCheck(this, Dir);
+        var _this;
 
+        babelHelpers.classCallCheck(this, Dir);
+        _this = babelHelpers.possibleConstructorReturn(this, (Dir.__proto__ || Object.getPrototypeOf(Dir)).call(this));
         /** @type {boolean} */
-        var _this = babelHelpers.possibleConstructorReturn(this, (Dir.__proto__ || Object.getPrototypeOf(Dir)).call(this));
 
         _this.__autoDirOptOut = false;
         return _this;
       }
-
       /**
        * @suppress {invalidCasts} Closure doesn't understand that `this` is an HTMLElement
        * @return {void}
@@ -151,43 +157,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
       babelHelpers.createClass(Dir, [{
-        key: 'ready',
+        key: "ready",
         value: function ready() {
-          babelHelpers.get(Dir.prototype.__proto__ || Object.getPrototypeOf(Dir.prototype), 'ready', this).call(this);
-          this.__autoDirOptOut = /** @type {!HTMLElement} */this.hasAttribute('dir');
+          babelHelpers.get(Dir.prototype.__proto__ || Object.getPrototypeOf(Dir.prototype), "ready", this).call(this);
+          this.__autoDirOptOut =
+          /** @type {!HTMLElement} */
+          this.hasAttribute('dir');
         }
-
         /**
          * @suppress {missingProperties} If it exists on elementBase, it can be super'd
          * @return {void}
          */
 
       }, {
-        key: 'connectedCallback',
+        key: "connectedCallback",
         value: function connectedCallback() {
           if (elementBase.prototype.connectedCallback) {
-            babelHelpers.get(Dir.prototype.__proto__ || Object.getPrototypeOf(Dir.prototype), 'connectedCallback', this).call(this);
+            babelHelpers.get(Dir.prototype.__proto__ || Object.getPrototypeOf(Dir.prototype), "connectedCallback", this).call(this);
           }
+
           if (this.constructor.__activateDir) {
             takeRecords();
             DIR_INSTANCES.push(this);
             setRTL(this);
           }
         }
-
         /**
          * @suppress {missingProperties} If it exists on elementBase, it can be super'd
          * @return {void}
          */
 
       }, {
-        key: 'disconnectedCallback',
+        key: "disconnectedCallback",
         value: function disconnectedCallback() {
           if (elementBase.prototype.disconnectedCallback) {
-            babelHelpers.get(Dir.prototype.__proto__ || Object.getPrototypeOf(Dir.prototype), 'disconnectedCallback', this).call(this);
+            babelHelpers.get(Dir.prototype.__proto__ || Object.getPrototypeOf(Dir.prototype), "disconnectedCallback", this).call(this);
           }
+
           if (this.constructor.__activateDir) {
             var idx = DIR_INSTANCES.indexOf(this);
+
             if (idx > -1) {
               DIR_INSTANCES.splice(idx, 1);
             }
@@ -198,7 +207,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }(elementBase);
 
     Dir.__activateDir = false;
-
     return Dir;
   });
 })();</script>

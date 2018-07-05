@@ -15,12 +15,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="property-effects.html">
 <link rel="import" href="properties-mixin.html">
 
-<script>
-(function () {
+<script>(function () {
   'use strict';
-
-  var ABS_URL = /(^\/)|(^#)|(^[\w-\d]*:)/;
-
   /**
    * Element class mixin that provides the core API for Polymer's meta-programming
    * features including template stamping, data-binding, attribute deserialization,
@@ -91,8 +87,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @summary Element class mixin that provides the core API for Polymer's
    * meta-programming features.
    */
-  Polymer.ElementMixin = Polymer.dedupingMixin(function (base) {
 
+  Polymer.ElementMixin = Polymer.dedupingMixin(function (base) {
     /**
      * @constructor
      * @extends {base}
@@ -100,7 +96,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @implements {Polymer_PropertiesMixin}
      */
     var polymerElementBase = Polymer.PropertiesMixin(Polymer.PropertyEffects(base));
-
     /**
      * Returns a list of properties with default values.
      * This list is created as an optimization since it is a subset of
@@ -112,35 +107,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      *   that have default values
      * @private
      */
+
     function propertyDefaults(constructor) {
       if (!constructor.hasOwnProperty(JSCompiler_renameProperty('__propertyDefaults', constructor))) {
         constructor.__propertyDefaults = null;
         var props = constructor._properties;
+
         for (var p in props) {
           var info = props[p];
+
           if ('value' in info) {
             constructor.__propertyDefaults = constructor.__propertyDefaults || {};
             constructor.__propertyDefaults[p] = info;
           }
         }
       }
+
       return constructor.__propertyDefaults;
     }
-
     /**
      * Returns a memoized version of the the `observers` array.
      * @param {PolymerElementConstructor} constructor Element class
      * @return {Array} Array containing own observers for the given class
      * @protected
      */
+
+
     function ownObservers(constructor) {
       if (!constructor.hasOwnProperty(JSCompiler_renameProperty('__ownObservers', constructor))) {
         constructor.__ownObservers = constructor.hasOwnProperty(JSCompiler_renameProperty('observers', constructor)) ?
-        /** @type {PolymerElementConstructor} */constructor.observers : null;
+        /** @type {PolymerElementConstructor} */
+        constructor.observers : null;
       }
+
       return constructor.__ownObservers;
     }
-
     /**
      * Creates effects for a property.
      *
@@ -200,39 +201,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @return {void}
      * @private
      */
+
+
     function createPropertyFromConfig(proto, name, info, allProps) {
       // computed forces readOnly...
       if (info.computed) {
         info.readOnly = true;
-      }
-      // Note, since all computed properties are readOnly, this prevents
+      } // Note, since all computed properties are readOnly, this prevents
       // adding additional computed property effects (which leads to a confusing
       // setup where multiple triggers for setting a property)
       // While we do have `hasComputedEffect` this is set on the property's
       // dependencies rather than itself.
+
+
       if (info.computed && !proto._hasReadOnlyEffect(name)) {
         proto._createComputedProperty(name, info.computed, allProps);
       }
+
       if (info.readOnly && !proto._hasReadOnlyEffect(name)) {
         proto._createReadOnlyProperty(name, !info.computed);
       }
+
       if (info.reflectToAttribute && !proto._hasReflectEffect(name)) {
         proto._createReflectedProperty(name);
       }
+
       if (info.notify && !proto._hasNotifyEffect(name)) {
         proto._createNotifyingProperty(name);
-      }
-      // always add observer
+      } // always add observer
+
+
       if (info.observer) {
         proto._createPropertyObserver(name, info.observer, allProps[info.observer]);
-      }
-      // always ensure an accessor is made for properties but don't stomp
-      // on existing values.
-      if (!info.readOnly && !(name in proto)) {
-        proto._createPropertyAccessor(name);
-      }
-    }
+      } // always create the mapping from attribute back to property for deserialization.
 
+
+      proto._addPropertyToAttributeMap(name);
+    }
     /**
      * Process all style elements in the element template. Styles with the
      * `include` attribute are processed such that any styles in
@@ -243,38 +248,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @param {string} baseURI Base URI for element
      * @private
      */
+
+
     function processElementStyles(klass, template, is, baseURI) {
       var templateStyles = template.content.querySelectorAll('style');
-      var stylesWithImports = Polymer.StyleGather.stylesFromTemplate(template);
-      // insert styles from <link rel="import" type="css"> at the top of the template
+      var stylesWithImports = Polymer.StyleGather.stylesFromTemplate(template); // insert styles from <link rel="import" type="css"> at the top of the template
+
       var linkedStyles = Polymer.StyleGather.stylesFromModuleImports(is);
       var firstTemplateChild = template.content.firstElementChild;
+
       for (var idx = 0; idx < linkedStyles.length; idx++) {
         var s = linkedStyles[idx];
         s.textContent = klass._processStyleText(s.textContent, baseURI);
         template.content.insertBefore(s, firstTemplateChild);
-      }
-      // keep track of the last "concrete" style in the template we have encountered
-      var templateStyleIndex = 0;
-      // ensure all gathered styles are actually in this template.
+      } // keep track of the last "concrete" style in the template we have encountered
+
+
+      var templateStyleIndex = 0; // ensure all gathered styles are actually in this template.
+
       for (var i = 0; i < stylesWithImports.length; i++) {
         var _s = stylesWithImports[i];
-        var templateStyle = templateStyles[templateStyleIndex];
-        // if the style is not in this template, it's been "included" and
+        var templateStyle = templateStyles[templateStyleIndex]; // if the style is not in this template, it's been "included" and
         // we put a clone of it in the template before the style that included it
+
         if (templateStyle !== _s) {
           _s = _s.cloneNode(true);
           templateStyle.parentNode.insertBefore(_s, templateStyle);
         } else {
           templateStyleIndex++;
         }
+
         _s.textContent = klass._processStyleText(_s.textContent, baseURI);
       }
+
       if (window.ShadyCSS) {
         window.ShadyCSS.prepareTemplate(template, is);
       }
     }
-
     /**
      * @polymer
      * @mixinClass
@@ -282,11 +292,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @implements {Polymer_ElementMixin}
      */
 
-    var PolymerElement = function (_polymerElementBase) {
+
+    var PolymerElement =
+    /*#__PURE__*/
+    function (_polymerElementBase) {
       babelHelpers.inherits(PolymerElement, _polymerElementBase);
       babelHelpers.createClass(PolymerElement, null, [{
-        key: '_finalizeClass',
-
+        key: "_finalizeClass",
 
         /**
          * Override of PropertiesMixin _finalizeClass to create observers and
@@ -297,16 +309,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @suppress {missingProperties} Interfaces in closure do not inherit statics, but classes do
          */
         value: function _finalizeClass() {
-          babelHelpers.get(PolymerElement.__proto__ || Object.getPrototypeOf(PolymerElement), '_finalizeClass', this).call(this);
+          babelHelpers.get(PolymerElement.__proto__ || Object.getPrototypeOf(PolymerElement), "_finalizeClass", this).call(this);
+
           if (this.hasOwnProperty(JSCompiler_renameProperty('is', this)) && this.is) {
             Polymer.telemetry.register(this.prototype);
           }
+
           var observers = ownObservers(this);
+
           if (observers) {
             this.createObservers(observers, this._properties);
-          }
-          // note: create "working" template that is finalized at instance time
-          var template = /** @type {PolymerElementConstructor} */this.template;
+          } // note: create "working" template that is finalized at instance time
+
+
+          var template =
+          /** @type {PolymerElementConstructor} */
+          this.template;
+
           if (template) {
             if (typeof template === 'string') {
               var t = document.createElement('template');
@@ -315,10 +334,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             } else {
               template = template.cloneNode(true);
             }
-            this.prototype._template = template;
           }
-        }
 
+          this.prototype._template = template;
+        }
         /**
          * Override of PropertiesChanged createProperties to create accessors
          * and property effects for all of the properties.
@@ -328,13 +347,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'createProperties',
+        key: "createProperties",
         value: function createProperties(props) {
           for (var p in props) {
             createPropertyFromConfig(this.prototype, p, props[p], props);
           }
         }
-
         /**
          * Creates observers for the given `observers` array.
          * Leverages `PropertyEffects` to create observers.
@@ -348,14 +366,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'createObservers',
+        key: "createObservers",
         value: function createObservers(observers, dynamicFns) {
           var proto = this.prototype;
+
           for (var i = 0; i < observers.length; i++) {
             proto._createMethodObserver(observers[i], dynamicFns);
           }
         }
-
         /**
          * Returns the template that will be stamped into this element's shadow root.
          *
@@ -395,19 +413,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'template',
+        key: "template",
         get: function get() {
           if (!this.hasOwnProperty(JSCompiler_renameProperty('_template', this))) {
             this._template = Polymer.DomModule && Polymer.DomModule.import(
-            /** @type {PolymerElementConstructor}*/this.is, 'template') ||
-            // note: implemented so a subclass can retrieve the super
+            /** @type {PolymerElementConstructor}*/
+            this.is, 'template') || // note: implemented so a subclass can retrieve the super
             // template; call the super impl this way so that `this` points
             // to the superclass.
-            Object.getPrototypeOf( /** @type {PolymerElementConstructor}*/this.prototype).constructor.template;
+            Object.getPrototypeOf(
+            /** @type {PolymerElementConstructor}*/
+            this.prototype).constructor.template;
           }
+
           return this._template;
         }
-
         /**
          * Path matching the url from which the element was imported.
          * This path is used to resolve url's in template style cssText.
@@ -421,36 +441,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'importPath',
+        key: "importPath",
         get: function get() {
           if (!this.hasOwnProperty(JSCompiler_renameProperty('_importPath', this))) {
-            var module = Polymer.DomModule && Polymer.DomModule.import( /** @type {PolymerElementConstructor} */this.is);
-            this._importPath = module ? module.assetpath : '' || Object.getPrototypeOf( /** @type {PolymerElementConstructor}*/this.prototype).constructor.importPath;
+            var module = Polymer.DomModule && Polymer.DomModule.import(
+            /** @type {PolymerElementConstructor} */
+            this.is);
+            this._importPath = module ? module.assetpath : '' || Object.getPrototypeOf(
+            /** @type {PolymerElementConstructor}*/
+            this.prototype).constructor.importPath;
           }
+
           return this._importPath;
         }
       }]);
 
       function PolymerElement() {
-        babelHelpers.classCallCheck(this, PolymerElement);
+        var _this;
 
+        babelHelpers.classCallCheck(this, PolymerElement);
+        _this = babelHelpers.possibleConstructorReturn(this, (PolymerElement.__proto__ || Object.getPrototypeOf(PolymerElement)).call(this));
         /** @type {HTMLTemplateElement} */
-        var _this = babelHelpers.possibleConstructorReturn(this, (PolymerElement.__proto__ || Object.getPrototypeOf(PolymerElement)).call(this));
 
         _this._template;
         /** @type {string} */
+
         _this._importPath;
         /** @type {string} */
+
         _this.rootPath;
         /** @type {string} */
+
         _this.importPath;
         /** @type {StampedTemplate | HTMLElement | ShadowRoot} */
+
         _this.root;
         /** @type {!Object<string, !Element>} */
+
         _this.$;
         return _this;
       }
-
       /**
        * Overrides the default `Polymer.PropertyAccessors` to ensure class
        * metaprogramming related to property accessors and effects has
@@ -466,32 +496,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
       babelHelpers.createClass(PolymerElement, [{
-        key: '_initializeProperties',
+        key: "_initializeProperties",
         value: function _initializeProperties() {
           Polymer.telemetry.instanceCount++;
           this.constructor.finalize();
-          var importPath = this.constructor.importPath;
-          // note: finalize template when we have access to `localName` to
+          var importPath = this.constructor.importPath; // note: finalize template when we have access to `localName` to
           // avoid dependence on `is` for polyfilling styling.
-          this.constructor._finalizeTemplate( /** @type {!HTMLElement} */this.localName);
-          babelHelpers.get(PolymerElement.prototype.__proto__ || Object.getPrototypeOf(PolymerElement.prototype), '_initializeProperties', this).call(this);
-          // set path defaults
+
+          this.constructor._finalizeTemplate(
+          /** @type {!HTMLElement} */
+          this.localName);
+
+          babelHelpers.get(PolymerElement.prototype.__proto__ || Object.getPrototypeOf(PolymerElement.prototype), "_initializeProperties", this).call(this); // set path defaults
+
           this.rootPath = Polymer.rootPath;
-          this.importPath = importPath;
-          // apply property defaults...
+          this.importPath = importPath; // apply property defaults...
+
           var p$ = propertyDefaults(this.constructor);
+
           if (!p$) {
             return;
           }
+
           for (var p in p$) {
-            var info = p$[p];
-            // Don't set default value if there is already an own property, which
+            var info = p$[p]; // Don't set default value if there is already an own property, which
             // happens when a `properties` property with default but no effects had
             // a property set (e.g. bound) by its host before upgrade
+
             if (!this.hasOwnProperty(p)) {
-              var value = typeof info.value == 'function' ? info.value.call(this) : info.value;
-              // Set via `_setProperty` if there is an accessor, to enable
+              var value = typeof info.value == 'function' ? info.value.call(this) : info.value; // Set via `_setProperty` if there is an accessor, to enable
               // initializing readOnly property defaults
+
               if (this._hasAccessor(p)) {
                 this._setPendingProperty(p, value, true);
               } else {
@@ -500,7 +535,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
           }
         }
-
         /**
          * Gather style text for a style element in the template.
          *
@@ -511,8 +545,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'connectedCallback',
-
+        key: "connectedCallback",
 
         /**
          * Provides a default implementation of the standard Custom Elements
@@ -527,11 +560,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
         value: function connectedCallback() {
           if (window.ShadyCSS && this._template) {
-            window.ShadyCSS.styleElement( /** @type {!HTMLElement} */this);
+            window.ShadyCSS.styleElement(
+            /** @type {!HTMLElement} */
+            this);
           }
-          babelHelpers.get(PolymerElement.prototype.__proto__ || Object.getPrototypeOf(PolymerElement.prototype), 'connectedCallback', this).call(this);
-        }
 
+          babelHelpers.get(PolymerElement.prototype.__proto__ || Object.getPrototypeOf(PolymerElement.prototype), "connectedCallback", this).call(this);
+        }
         /**
          * Stamps the element template.
          *
@@ -540,15 +575,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'ready',
+        key: "ready",
         value: function ready() {
           if (this._template) {
             this.root = this._stampTemplate(this._template);
             this.$ = this.root.$;
           }
-          babelHelpers.get(PolymerElement.prototype.__proto__ || Object.getPrototypeOf(PolymerElement.prototype), 'ready', this).call(this);
-        }
 
+          babelHelpers.get(PolymerElement.prototype.__proto__ || Object.getPrototypeOf(PolymerElement.prototype), "ready", this).call(this);
+        }
         /**
          * Implements `PropertyEffects`'s `_readyClients` call. Attaches
          * element dom by calling `_attachDom` with the dom stamped from the
@@ -561,18 +596,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: '_readyClients',
+        key: "_readyClients",
         value: function _readyClients() {
           if (this._template) {
-            this.root = this._attachDom( /** @type {StampedTemplate} */this.root);
-          }
-          // The super._readyClients here sets the clients initialized flag.
+            this.root = this._attachDom(
+            /** @type {StampedTemplate} */
+            this.root);
+          } // The super._readyClients here sets the clients initialized flag.
           // We must wait to do this until after client dom is created/attached
           // so that this flag can be checked to prevent notifications fired
           // during this process from being handled before clients are ready.
-          babelHelpers.get(PolymerElement.prototype.__proto__ || Object.getPrototypeOf(PolymerElement.prototype), '_readyClients', this).call(this);
-        }
 
+
+          babelHelpers.get(PolymerElement.prototype.__proto__ || Object.getPrototypeOf(PolymerElement.prototype), "_readyClients", this).call(this);
+        }
         /**
          * Attaches an element's stamped dom to itself. By default,
          * this method creates a `shadowRoot` and adds the dom to it.
@@ -586,24 +623,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: '_attachDom',
+        key: "_attachDom",
         value: function _attachDom(dom) {
           if (this.attachShadow) {
             if (dom) {
               if (!this.shadowRoot) {
-                this.attachShadow({ mode: 'open' });
+                this.attachShadow({
+                  mode: 'open'
+                });
               }
+
               this.shadowRoot.appendChild(dom);
               return this.shadowRoot;
             }
+
             return null;
           } else {
-            throw new Error('ShadowDOM not available. ' +
-            // TODO(sorvell): move to compile-time conditional when supported
+            throw new Error('ShadowDOM not available. ' + // TODO(sorvell): move to compile-time conditional when supported
             'Polymer.Element can create dom as children instead of in ' + 'ShadowDOM by setting `this.root = this;\` before \`ready\`.');
           }
         }
-
         /**
          * When using the ShadyCSS scoping and custom property shim, causes all
          * shimmed styles in this element (and its subtree) to be updated
@@ -617,6 +656,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          *
          * These properties are retained unless a value of `null` is set.
          *
+         * Note: This function does not support updating CSS mixins.
+         * You can not dynamically change the value of an `@apply`.
+         *
          * @param {Object=} properties Bag of custom property key/values to
          *   apply to this element.
          * @return {void}
@@ -624,18 +666,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'updateStyles',
+        key: "updateStyles",
         value: function updateStyles(properties) {
           if (window.ShadyCSS) {
-            window.ShadyCSS.styleSubtree( /** @type {!HTMLElement} */this, properties);
+            window.ShadyCSS.styleSubtree(
+            /** @type {!HTMLElement} */
+            this, properties);
           }
         }
-
         /**
          * Rewrites a given URL relative to a base URL. The base URL defaults to
          * the original location of the document containing the `dom-module` for
          * this element. This method will return the same URL before and after
          * bundling.
+         *
+         * Note that this function performs no resolution for URLs that start
+         * with `/` (absolute URLs) or `#` (hash identifiers).  For general purpose
+         * URL resolution, use `window.URL`.
          *
          * @param {string} url URL to resolve.
          * @param {string=} base Optional base URL to resolve against, defaults
@@ -644,19 +691,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'resolveUrl',
+        key: "resolveUrl",
         value: function resolveUrl(url, base) {
-          // Preserve backward compatibility with `this.resolveUrl('/foo')` resolving
-          // against the main document per #2448
-          if (url && ABS_URL.test(url)) {
-            return url;
-          }
           if (!base && this.importPath) {
             base = Polymer.ResolveUrl.resolveUrl(this.importPath);
           }
+
           return Polymer.ResolveUrl.resolveUrl(url, base);
         }
-
         /**
          * Overrides `PropertyAccessors` to add map of dynamic functions on
          * template info, for consumption by `PropertyEffects` template binding
@@ -668,11 +710,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }], [{
-        key: '_processStyleText',
+        key: "_processStyleText",
         value: function _processStyleText(cssText, baseURI) {
           return Polymer.ResolveUrl.resolveCss(cssText, baseURI);
         }
-
         /**
         * Configures an element `proto` to function with a given `template`.
         * The element name `is` and extends `ext` must be specified for ShadyCSS
@@ -684,24 +725,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         */
 
       }, {
-        key: '_finalizeTemplate',
+        key: "_finalizeTemplate",
         value: function _finalizeTemplate(is) {
           /** @const {HTMLTemplateElement} */
           var template = this.prototype._template;
+
           if (template && !template.__polymerFinalized) {
             template.__polymerFinalized = true;
             var importPath = this.importPath;
-            var baseURI = importPath ? Polymer.ResolveUrl.resolveUrl(importPath) : '';
-            // e.g. support `include="module-name"`, and ShadyCSS
+            var baseURI = importPath ? Polymer.ResolveUrl.resolveUrl(importPath) : ''; // e.g. support `include="module-name"`, and ShadyCSS
+
             processElementStyles(this, template, is, baseURI);
+
             this.prototype._bindTemplate(template);
           }
         }
       }, {
-        key: '_parseTemplateContent',
+        key: "_parseTemplateContent",
         value: function _parseTemplateContent(template, templateInfo, nodeInfo) {
           templateInfo.dynamicFns = templateInfo.dynamicFns || this._properties;
-          return babelHelpers.get(PolymerElement.__proto__ || Object.getPrototypeOf(PolymerElement), '_parseTemplateContent', this).call(this, template, templateInfo, nodeInfo);
+          return babelHelpers.get(PolymerElement.__proto__ || Object.getPrototypeOf(PolymerElement), "_parseTemplateContent", this).call(this, template, templateInfo, nodeInfo);
         }
       }]);
       return PolymerElement;
@@ -709,7 +752,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     return PolymerElement;
   });
-
   /**
    * Provides basic tracking of element definitions (registrations) and
    * instance counts.
@@ -718,17 +760,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @summary Provides basic tracking of element definitions (registrations) and
    * instance counts.
    */
+
   Polymer.telemetry = {
     /**
      * Total number of Polymer element instances created.
      * @type {number}
      */
     instanceCount: 0,
+
     /**
      * Array of Polymer element classes that have been finalized.
      * @type {Array<Polymer.Element>}
      */
     registrations: [],
+
     /**
      * @param {!PolymerElementConstructor} prototype Element prototype to log
      * @this {this}
@@ -737,6 +782,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     _regLog: function _regLog(prototype) {
       console.log('[' + prototype.is + ']: registered');
     },
+
     /**
      * Registers a class prototype for telemetry purposes.
      * @param {HTMLElement} prototype Element prototype to register
@@ -747,6 +793,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.registrations.push(prototype);
       Polymer.log && this._regLog(prototype);
     },
+
     /**
      * Logs all elements registered with an `is` to the console.
      * @public
@@ -756,7 +803,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       this.registrations.forEach(this._regLog);
     }
   };
-
   /**
    * When using the ShadyCSS scoping and custom property shim, causes all
    * shimmed `styles` (via `custom-style`) in the document (and its subtree)
@@ -774,6 +820,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    *   apply to the document.
    * @return {void}
    */
+
   Polymer.updateStyles = function (props) {
     if (window.ShadyCSS) {
       window.ShadyCSS.styleDocument(props);

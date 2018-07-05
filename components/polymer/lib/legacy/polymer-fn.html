@@ -8,11 +8,8 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="class.html">
 
-<script>
-
-(function () {
+<script>(function () {
   'use strict';
-
   /**
    * Legacy class factory and registration helper for defining Polymer
    * elements.
@@ -34,13 +31,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   window.Polymer._polymerFn = function (info) {
     // if input is a `class` (aka a function with a prototype), use the prototype
     // remember that the `constructor` will never be called
-    var klass = void 0;
+    var klass;
+
     if (typeof info === 'function') {
       klass = info;
     } else {
       klass = Polymer.Class(info);
     }
-    customElements.define(klass.is, /** @type {!HTMLElement} */klass);
+
+    customElements.define(klass.is,
+    /** @type {!HTMLElement} */
+    klass);
     return klass;
   };
 })();</script>

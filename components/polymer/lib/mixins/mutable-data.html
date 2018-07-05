@@ -8,31 +8,30 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="../utils/mixin.html">
 
-<script>
-(function () {
-  'use strict';
-
-  // Common implementation for mixin & behavior
+<script>(function () {
+  'use strict'; // Common implementation for mixin & behavior
 
   function mutablePropertyChange(inst, property, value, old, mutableData) {
-    var isObject = void 0;
+    var isObject;
+
     if (mutableData) {
-      isObject = (typeof value === 'undefined' ? 'undefined' : babelHelpers.typeof(value)) === 'object' && value !== null;
-      // Pull `old` for Objects from temp cache, but treat `null` as a primitive
+      isObject = babelHelpers.typeof(value) === 'object' && value !== null; // Pull `old` for Objects from temp cache, but treat `null` as a primitive
+
       if (isObject) {
         old = inst.__dataTemp[property];
       }
-    }
-    // Strict equality check, but return false for NaN===NaN
-    var shouldChange = old !== value && (old === old || value === value);
-    // Objects are stored in temporary cache (cleared at end of
+    } // Strict equality check, but return false for NaN===NaN
+
+
+    var shouldChange = old !== value && (old === old || value === value); // Objects are stored in temporary cache (cleared at end of
     // turn), which is used for dirty-checking
+
     if (isObject && shouldChange) {
       inst.__dataTemp[property] = value;
     }
+
     return shouldChange;
   }
-
   /**
    * Element class mixin to skip strict dirty-checking for objects and arrays
    * (always consider them to be "dirty"), for use on elements utilizing
@@ -73,14 +72,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @summary Element class mixin to skip strict dirty-checking for objects
    *   and arrays
    */
-  Polymer.MutableData = Polymer.dedupingMixin(function (superClass) {
 
+
+  Polymer.MutableData = Polymer.dedupingMixin(function (superClass) {
     /**
      * @polymer
      * @mixinClass
      * @implements {Polymer_MutableData}
      */
-    var MutableData = function (_superClass) {
+    var MutableData =
+    /*#__PURE__*/
+    function (_superClass) {
       babelHelpers.inherits(MutableData, _superClass);
 
       function MutableData() {
@@ -89,7 +91,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       babelHelpers.createClass(MutableData, [{
-        key: '_shouldPropertyChange',
+        key: "_shouldPropertyChange",
 
         /**
          * Overrides `Polymer.PropertyEffects` to provide option for skipping
@@ -114,14 +116,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }]);
       return MutableData;
     }(superClass);
-    /** @type {boolean} */
-
-
-    MutableData.prototype.mutableData = false;
 
     return MutableData;
   });
-
   /**
    * Element class mixin to add the optional ability to skip strict
    * dirty-checking for objects and arrays (always consider them to be
@@ -163,14 +160,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @summary Element class mixin to optionally skip strict dirty-checking
    *   for objects and arrays
    */
-  Polymer.OptionalMutableData = Polymer.dedupingMixin(function (superClass) {
 
+  Polymer.OptionalMutableData = Polymer.dedupingMixin(function (superClass) {
     /**
      * @mixinClass
      * @polymer
      * @implements {Polymer_OptionalMutableData}
      */
-    var OptionalMutableData = function (_superClass2) {
+    var OptionalMutableData =
+    /*#__PURE__*/
+    function (_superClass2) {
       babelHelpers.inherits(OptionalMutableData, _superClass2);
 
       function OptionalMutableData() {
@@ -179,8 +178,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       babelHelpers.createClass(OptionalMutableData, [{
-        key: '_shouldPropertyChange',
-
+        key: "_shouldPropertyChange",
 
         /**
          * Overrides `Polymer.PropertyEffects` to provide option for skipping
@@ -204,7 +202,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return mutablePropertyChange(this, property, value, old, this.mutableData);
         }
       }], [{
-        key: 'properties',
+        key: "properties",
         get: function get() {
           return {
             /**
@@ -220,8 +218,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }(superClass);
 
     return OptionalMutableData;
-  });
+  }); // Export for use by legacy behavior
 
-  // Export for use by legacy behavior
   Polymer.MutableData._mutablePropertyChange = mutablePropertyChange;
 })();</script>

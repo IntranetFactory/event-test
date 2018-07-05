@@ -8,14 +8,11 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="../../../shadycss/custom-style-interface.html">
 <link rel="import" href="../utils/style-gather.html">
-<script>
-(function () {
+<script>(function () {
   'use strict';
 
   var attr = 'include';
-
   var CustomStyleInterface = window.ShadyCSS.CustomStyleInterface;
-
   /**
    * Custom element for defining styles in the main document that can take
    * advantage of [shady DOM](https://github.com/webcomponents/shadycss) shims
@@ -38,12 +35,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    *
    * For example:
    *
-   * ```
+   * ```html
    * <!-- import apply shim--only required if using mixins -->
-   * <link rel="import href="bower_components/shadycss/apply-shim.html">
+   * <link rel="import" href="bower_components/shadycss/apply-shim.html">
    * <!-- import custom-style element -->
    * <link rel="import" href="bower_components/polymer/lib/elements/custom-style.html">
-   * ...
+   *
    * <custom-style>
    *   <style>
    *     html {
@@ -64,16 +61,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    *   take advantage of Polymer's style scoping and custom properties shims.
    */
 
-  var CustomStyle = function (_HTMLElement) {
+  var CustomStyle =
+  /*#__PURE__*/
+  function (_HTMLElement) {
     babelHelpers.inherits(CustomStyle, _HTMLElement);
 
     function CustomStyle() {
+      var _this;
+
       babelHelpers.classCallCheck(this, CustomStyle);
-
-      var _this = babelHelpers.possibleConstructorReturn(this, (CustomStyle.__proto__ || Object.getPrototypeOf(CustomStyle)).call(this));
-
+      _this = babelHelpers.possibleConstructorReturn(this, (CustomStyle.__proto__ || Object.getPrototypeOf(CustomStyle)).call(this));
       _this._style = null;
-      CustomStyleInterface.addCustomStyle(_this);
+      CustomStyleInterface.addCustomStyle(babelHelpers.assertThisInitialized(_this));
       return _this;
     }
     /**
@@ -86,17 +85,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     babelHelpers.createClass(CustomStyle, [{
-      key: 'getStyle',
+      key: "getStyle",
       value: function getStyle() {
         if (this._style) {
           return this._style;
         }
-        var style = /** @type {HTMLStyleElement} */this.querySelector('style');
+
+        var style =
+        /** @type {HTMLStyleElement} */
+        this.querySelector('style');
+
         if (!style) {
           return null;
         }
+
         this._style = style;
         var include = style.getAttribute(attr);
+
         if (include) {
           style.removeAttribute(attr);
           style.textContent = Polymer.StyleGather.cssFromModules(include) + style.textContent;
@@ -109,9 +114,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          The ordering of `<custom-style>` should stay the same as when loaded by HTML Imports, but there may be odd
         cases of ordering w.r.t the main document styles.
         */
+
+
         if (this.ownerDocument !== window.document) {
           window.document.head.appendChild(this);
         }
+
         return this._style;
       }
     }]);

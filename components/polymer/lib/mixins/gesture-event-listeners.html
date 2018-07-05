@@ -10,17 +10,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../utils/mixin.html">
 <link rel="import" href="../utils/gestures.html">
 
-<script>
-(function () {
-
+<script>(function () {
   'use strict';
-
   /**
    * @const {Polymer.Gestures}
    */
 
   var gestures = Polymer.Gestures;
-
   /**
    * Element class mixin that provides API for adding Polymer's cross-platform
    * gesture events to nodes.
@@ -36,14 +32,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @summary Element class mixin that provides API for adding Polymer's cross-platform
    * gesture events to nodes
    */
-  Polymer.GestureEventListeners = Polymer.dedupingMixin(function (superClass) {
 
+  Polymer.GestureEventListeners = Polymer.dedupingMixin(function (superClass) {
     /**
      * @polymer
      * @mixinClass
      * @implements {Polymer_GestureEventListeners}
      */
-    var GestureEventListeners = function (_superClass) {
+    var GestureEventListeners =
+    /*#__PURE__*/
+    function (_superClass) {
       babelHelpers.inherits(GestureEventListeners, _superClass);
 
       function GestureEventListeners() {
@@ -52,8 +50,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       babelHelpers.createClass(GestureEventListeners, [{
-        key: '_addEventListenerToNode',
-
+        key: "_addEventListenerToNode",
 
         /**
          * Add the event listener to the node if it is a gestures event.
@@ -65,10 +62,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
         value: function _addEventListenerToNode(node, eventName, handler) {
           if (!gestures.addListener(node, eventName, handler)) {
-            babelHelpers.get(GestureEventListeners.prototype.__proto__ || Object.getPrototypeOf(GestureEventListeners.prototype), '_addEventListenerToNode', this).call(this, node, eventName, handler);
+            babelHelpers.get(GestureEventListeners.prototype.__proto__ || Object.getPrototypeOf(GestureEventListeners.prototype), "_addEventListenerToNode", this).call(this, node, eventName, handler);
           }
         }
-
         /**
          * Remove the event listener to the node if it is a gestures event.
          *
@@ -79,10 +75,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: '_removeEventListenerFromNode',
+        key: "_removeEventListenerFromNode",
         value: function _removeEventListenerFromNode(node, eventName, handler) {
           if (!gestures.removeListener(node, eventName, handler)) {
-            babelHelpers.get(GestureEventListeners.prototype.__proto__ || Object.getPrototypeOf(GestureEventListeners.prototype), '_removeEventListenerFromNode', this).call(this, node, eventName, handler);
+            babelHelpers.get(GestureEventListeners.prototype.__proto__ || Object.getPrototypeOf(GestureEventListeners.prototype), "_removeEventListenerFromNode", this).call(this, node, eventName, handler);
           }
         }
       }]);

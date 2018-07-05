@@ -7,14 +7,12 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="boot.html">
-<script>
-(function () {
+<script>(function () {
   'use strict';
 
   var caseMap = {};
   var DASH_TO_CAMEL = /-[a-z]/g;
   var CAMEL_TO_DASH = /([A-Z])/g;
-
   /**
    * Module with utilities for converting between "dash-case" and "camelCase"
    * identifiers.
@@ -24,8 +22,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @summary Module that provides utilities for converting between "dash-case"
    *   and "camelCase".
    */
-  var CaseMap = {
 
+  var CaseMap = {
     /**
      * Converts "dash-case" identifier (e.g. `foo-bar-baz`) to "camelCase"
      * (e.g. `fooBarBaz`).
@@ -40,7 +38,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }));
     },
 
-
     /**
      * Converts "camelCase" identifier (e.g. `fooBarBaz`) to "dash-case"
      * (e.g. `foo-bar-baz`).
@@ -53,6 +50,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return caseMap[camel] || (caseMap[camel] = camel.replace(CAMEL_TO_DASH, '-$1').toLowerCase());
     }
   };
-
   Polymer.CaseMap = CaseMap;
 })();</script>

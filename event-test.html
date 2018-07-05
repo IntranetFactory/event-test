@@ -1,7 +1,7 @@
-<link rel="import" href="components/tangere/tangere.html" />
-<link rel="import" href="event-source.html" />
-<link rel="import" href="event-source-lv2.html" />
-<link rel="import" href="event-source-lv3.html" />
+<link rel="import" href="components/tangere/tangere.html">
+<link rel="import" href="event-source.html">
+<link rel="import" href="event-source-lv2.html">
+<link rel="import" href="event-source-lv3.html">
 
 <dom-module id="event-test">
   <template>
@@ -16,45 +16,21 @@
       }
     </style>
     
-    <event-source 
-      class="mt" 
-      id="level1EventSource" 
-      label="Event source lv1"
-      placeholder="type to trigger change event on level 1"
-      dispatch-method="dispatchMethod"
-    ></event-source>
+    <event-source class="mt" id="level1EventSource" label="Event source lv1" placeholder="type to trigger change event on level 1" dispatch-method="dispatchMethod"></event-source>
 
-    <event-source-lv2 
-      class="mt"
-      id="level2EventSource" 
-      label="Event source lv1"
-      placeholder="type to trigger change event on level 1"
-      dispatch-method="dispatchMethod"
-    ></event-source-lv2>
+    <event-source-lv2 class="mt" id="level2EventSource" label="Event source lv1" placeholder="type to trigger change event on level 1" dispatch-method="dispatchMethod"></event-source-lv2>
 
-    <event-source-lv3 
-      class="mt"
-      id="level3EventSource"
-      label="Event source lv1"
-      placeholder="type to trigger change event on level 1"
-      dispatch-method="dispatchMethod"
-    ></event-source-lv3>
+    <event-source-lv3 class="mt" id="level3EventSource" label="Event source lv1" placeholder="type to trigger change event on level 1" dispatch-method="dispatchMethod"></event-source-lv3>
 
   </template>
 </dom-module>
-<script>
-  Polymer({
-    is: "event-test",
-    properties: {
-
-      dispatchMethod: {
-        type:String,
-        value: ''
-      }
-      
-    },
-    ready: function () {
-
+<script>Polymer({
+  is: "event-test",
+  properties: {
+    dispatchMethod: {
+      type: String,
+      value: ''
     }
-  });
-</script>
+  },
+  ready: function ready() {}
+});</script>

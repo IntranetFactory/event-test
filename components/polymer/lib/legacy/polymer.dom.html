@@ -10,16 +10,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../utils/settings.html">
 <link rel="import" href="../utils/flattened-nodes-observer.html">
 <link rel="import" href="../utils/flush.html">
-<script>
-(function () {
+<script>(function () {
   'use strict';
 
   var p = Element.prototype;
   /**
    * @const {function(this:Node, string): boolean}
    */
-  var normalizedMatchesSelector = p.matches || p.matchesSelector || p.mozMatchesSelector || p.msMatchesSelector || p.oMatchesSelector || p.webkitMatchesSelector;
 
+  var normalizedMatchesSelector = p.matches || p.matchesSelector || p.mozMatchesSelector || p.msMatchesSelector || p.oMatchesSelector || p.webkitMatchesSelector;
   /**
    * Cross-platform `element.matches` shim.
    *
@@ -29,10 +28,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @param {string} selector Selector to match
    * @return {boolean} True if node matched selector
    */
+
   var matchesSelector = function matchesSelector(node, selector) {
     return normalizedMatchesSelector.call(node, selector);
   };
-
   /**
    * Node API wrapper class returned from `Polymer.dom.(target)` when
    * `target` is a `Node`.
@@ -40,17 +39,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @memberof Polymer
    */
 
-  var DomApi = function () {
 
+  var DomApi =
+  /*#__PURE__*/
+  function () {
     /**
      * @param {Node} node Node for which to create a Polymer.dom helper object.
      */
     function DomApi(node) {
       babelHelpers.classCallCheck(this, DomApi);
-
       this.node = node;
     }
-
     /**
      * Returns an instance of `Polymer.FlattenedNodesObserver` that
      * listens for node changes on this element.
@@ -62,11 +61,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     babelHelpers.createClass(DomApi, [{
-      key: 'observeNodes',
+      key: "observeNodes",
       value: function observeNodes(callback) {
         return new Polymer.FlattenedNodesObserver(this.node, callback);
       }
-
       /**
        * Disconnects an observer previously created via `observeNodes`
        *
@@ -76,20 +74,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'unobserveNodes',
+      key: "unobserveNodes",
       value: function unobserveNodes(observerHandle) {
         observerHandle.disconnect();
       }
-
       /**
        * Provided as a backwards-compatible API only.  This method does nothing.
        * @return {void}
        */
 
     }, {
-      key: 'notifyObserver',
+      key: "notifyObserver",
       value: function notifyObserver() {}
-
       /**
        * Returns true if the provided node is contained with this element's
        * light-DOM children or shadow root, including any nested shadow roots
@@ -101,21 +97,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'deepContains',
+      key: "deepContains",
       value: function deepContains(node) {
         if (this.node.contains(node)) {
           return true;
         }
+
         var n = node;
-        var doc = node.ownerDocument;
-        // walk from node to `this` or `document`
+        var doc = node.ownerDocument; // walk from node to `this` or `document`
+
         while (n && n !== doc && n !== this.node) {
           // use logical parentnode, or native ShadowRoot host
           n = n.parentNode || n.host;
         }
+
         return n === this.node;
       }
-
       /**
        * Returns the root node of this node.  Equivalent to `getRoodNode()`.
        *
@@ -126,11 +123,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'getOwnerRoot',
+      key: "getOwnerRoot",
       value: function getOwnerRoot() {
         return this.node.getRootNode();
       }
-
       /**
        * For slot elements, returns the nodes assigned to the slot; otherwise
        * an empty array. It is equivalent to `<slot>.addignedNodes({flatten:true})`.
@@ -139,11 +135,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'getDistributedNodes',
+      key: "getDistributedNodes",
       value: function getDistributedNodes() {
-        return this.node.localName === 'slot' ? this.node.assignedNodes({ flatten: true }) : [];
+        return this.node.localName === 'slot' ? this.node.assignedNodes({
+          flatten: true
+        }) : [];
       }
-
       /**
        * Returns an array of all slots this element was distributed to.
        *
@@ -151,17 +148,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'getDestinationInsertionPoints',
+      key: "getDestinationInsertionPoints",
       value: function getDestinationInsertionPoints() {
         var ip$ = [];
         var n = this.node.assignedSlot;
+
         while (n) {
           ip$.push(n);
           n = n.assignedSlot;
         }
+
         return ip$;
       }
-
       /**
        * Calls `importNode` on the `ownerDocument` for this node.
        *
@@ -172,23 +170,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'importNode',
+      key: "importNode",
       value: function importNode(node, deep) {
-        var doc = this.node instanceof Document ? this.node : this.node.ownerDocument;
+        var doc = babelHelpers.instanceof(this.node, Document) ? this.node : this.node.ownerDocument;
         return doc.importNode(node, deep);
       }
-
       /**
        * @return {!Array<!Node>} Returns a flattened list of all child nodes and
        * nodes assigned to child slots.
        */
 
     }, {
-      key: 'getEffectiveChildNodes',
+      key: "getEffectiveChildNodes",
       value: function getEffectiveChildNodes() {
         return Polymer.FlattenedNodesObserver.getFlattenedNodes(this.node);
       }
-
       /**
        * Returns a filtered list of flattened child elements for this element based
        * on the given selector.
@@ -198,18 +194,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'queryDistributedElements',
+      key: "queryDistributedElements",
       value: function queryDistributedElements(selector) {
         var c$ = this.getEffectiveChildNodes();
         var list = [];
+
         for (var i = 0, l = c$.length, c; i < l && (c = c$[i]); i++) {
           if (c.nodeType === Node.ELEMENT_NODE && matchesSelector(c, selector)) {
             list.push(c);
           }
         }
+
         return list;
       }
-
       /**
        * For shadow roots, returns the currently focused element within this
        * shadow root.
@@ -218,7 +215,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'activeElement',
+      key: "activeElement",
       get: function get() {
         var node = this.node;
         return node._activeElement !== undefined ? node._activeElement : node.activeElement;
@@ -231,10 +228,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var _loop = function _loop(i) {
       var method = methods[i];
       /* eslint-disable valid-jsdoc */
-      proto[method] = /** @this {DomApi} */function () {
+
+      proto[method] =
+      /** @this {DomApi} */
+      function () {
         return this.node[method].apply(this.node, arguments);
       };
       /* eslint-enable */
+
     };
 
     for (var i = 0; i < methods.length; i++) {
@@ -247,7 +248,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var name = properties[i];
       Object.defineProperty(proto, name, {
         get: function get() {
-          var domApi = /** @type {DomApi} */this;
+          var domApi =
+          /** @type {DomApi} */
+          this;
           return domApi.node[name];
         },
         configurable: true
@@ -264,11 +267,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var name = properties[i];
       Object.defineProperty(proto, name, {
         get: function get() {
-          var domApi = /** @type {DomApi} */this;
+          var domApi =
+          /** @type {DomApi} */
+          this;
           return domApi.node[name];
         },
         set: function set(value) {
-          /** @type {DomApi} */this.node[name] = value;
+          /** @type {DomApi} */
+          this.node[name] = value;
         },
         configurable: true
       });
@@ -280,23 +286,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }
 
   forwardMethods(DomApi.prototype, ['cloneNode', 'appendChild', 'insertBefore', 'removeChild', 'replaceChild', 'setAttribute', 'removeAttribute', 'querySelector', 'querySelectorAll']);
-
   forwardReadOnlyProperties(DomApi.prototype, ['parentNode', 'firstChild', 'lastChild', 'nextSibling', 'previousSibling', 'firstElementChild', 'lastElementChild', 'nextElementSibling', 'previousElementSibling', 'childNodes', 'children', 'classList']);
-
   forwardProperties(DomApi.prototype, ['textContent', 'innerHTML']);
-
   /**
    * Event API wrapper class returned from `Polymer.dom.(target)` when
    * `target` is an `Event`.
    */
 
-  var EventApi = function () {
+  var EventApi =
+  /*#__PURE__*/
+  function () {
     function EventApi(event) {
       babelHelpers.classCallCheck(this, EventApi);
-
       this.event = event;
     }
-
     /**
      * Returns the first node on the `composedPath` of this event.
      *
@@ -305,11 +308,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     babelHelpers.createClass(EventApi, [{
-      key: 'rootTarget',
+      key: "rootTarget",
       get: function get() {
         return this.event.composedPath()[0];
       }
-
       /**
        * Returns the local (re-targeted) target for this event.
        *
@@ -317,18 +319,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'localTarget',
+      key: "localTarget",
       get: function get() {
         return this.event.target;
       }
-
       /**
        * Returns the `composedPath` for this event.
-       * @return {!Array<EventTarget>} The nodes this event propagated through
+       * @return {!Array<!EventTarget>} The nodes this event propagated through
        */
 
     }, {
-      key: 'path',
+      key: "path",
       get: function get() {
         return this.event.composedPath();
       }
@@ -337,18 +338,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }();
 
   Polymer.DomApi = DomApi;
-
   /**
    * @function
    * @param {boolean=} deep
    * @return {!Node}
    */
+
   Polymer.DomApi.prototype.cloneNode;
   /**
    * @function
    * @param {!Node} node
    * @return {!Node}
    */
+
   Polymer.DomApi.prototype.appendChild;
   /**
    * @function
@@ -356,12 +358,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @param {Node} refChild
    * @return {!Node}
    */
+
   Polymer.DomApi.prototype.insertBefore;
   /**
    * @function
    * @param {!Node} node
    * @return {!Node}
    */
+
   Polymer.DomApi.prototype.removeChild;
   /**
    * @function
@@ -369,6 +373,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @param {!Node} newChild
    * @return {!Node}
    */
+
   Polymer.DomApi.prototype.replaceChild;
   /**
    * @function
@@ -376,26 +381,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @param {string} value
    * @return {void}
    */
+
   Polymer.DomApi.prototype.setAttribute;
   /**
    * @function
    * @param {string} name
    * @return {void}
    */
+
   Polymer.DomApi.prototype.removeAttribute;
   /**
    * @function
    * @param {string} selector
    * @return {?Element}
    */
+
   Polymer.DomApi.prototype.querySelector;
   /**
    * @function
    * @param {string} selector
    * @return {!NodeList<!Element>}
    */
-  Polymer.DomApi.prototype.querySelectorAll;
 
+  Polymer.DomApi.prototype.querySelectorAll;
   /**
    * Legacy DOM and Event manipulation API wrapper factory used to abstract
    * differences between native Shadow DOM and "Shady DOM" when polyfilling on
@@ -412,22 +420,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @param {(Node|Event)=} obj Node or event to operate on
    * @return {!DomApi|!EventApi} Wrapper providing either node API or event API
    */
+
   Polymer.dom = function (obj) {
     obj = obj || document;
+
     if (!obj.__domApi) {
-      var helper = void 0;
-      if (obj instanceof Event) {
+      var helper;
+
+      if (babelHelpers.instanceof(obj, Event)) {
         helper = new EventApi(obj);
       } else {
         helper = new DomApi(obj);
       }
+
       obj.__domApi = helper;
     }
+
     return obj.__domApi;
   };
 
   Polymer.dom.matchesSelector = matchesSelector;
-
   /**
    * Forces several classes of asynchronously queued tasks to flush:
    * - Debouncers added via `Polymer.enqueueDebouncer`
@@ -437,8 +449,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    *
    * @memberof Polymer.dom
    */
-  Polymer.dom.flush = Polymer.flush;
 
+  Polymer.dom.flush = Polymer.flush;
   /**
    * Adds a `Polymer.Debouncer` to a list of globally flushable tasks.
    *
@@ -447,5 +459,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @memberof Polymer.dom
    * @param {Polymer.Debouncer} debouncer Debouncer to enqueue
    */
+
   Polymer.dom.addDebouncer = Polymer.enqueueDebouncer;
 })();</script>

@@ -12,8 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../utils/flush.html">
 <link rel="import" href="../mixins/mutable-data.html">
 
-<script>
-(function () {
+<script>(function () {
   'use strict';
 
   var TemplateInstanceBase = Polymer.TemplateInstanceBase; // eslint-disable-line
@@ -23,8 +22,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @implements {Polymer_OptionalMutableData}
    * @extends {Polymer.Element}
    */
-  var domRepeatBase = Polymer.OptionalMutableData(Polymer.Element);
 
+  var domRepeatBase = Polymer.OptionalMutableData(Polymer.Element);
   /**
    * The `<dom-repeat>` element will automatically stamp and binds one instance
    * of template content to each object in a user-provided array.
@@ -41,27 +40,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    *   <template>
    *
    *     <div> Employee list: </div>
-   *     <template is="dom-repeat" items="{{employees}}">
+   *     <dom-repeat items="{{employees}}">
+   *       <template>
    *         <div>First name: <span>{{item.first}}</span></div>
    *         <div>Last name: <span>{{item.last}}</span></div>
-   *     </template>
+   *       </template>
+   *     </dom-repeat>
    *
    *   </template>
    *
-   *   <script>
-   *     Polymer({
-   *       is: 'employee-list',
-   *       ready: function() {
-   *         this.employees = [
+   * </dom-module>
+   * ```
+   *
+   * With the following custom element definition:
+   *
+   * ```js
+   * class EmployeeList extends Polymer.Element {
+   *   static get is() { return 'employee-list'; }
+   *   static get properties() {
+   *     return {
+   *       employees: {
+   *         value() {
+   *           return [
    *             {first: 'Bob', last: 'Smith'},
    *             {first: 'Sally', last: 'Johnson'},
    *             ...
-   *         ];
+   *           ];
+   *         }
    *       }
-   *     });
-   *   < /script>
-   *
-   * </dom-module>
+   *     };
+   *   }
+   * }
    * ```
    *
    * Notifications for changes to items sub-properties will be forwarded to template
@@ -100,16 +109,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * For example, for an `dom-repeat` with a filter of the following:
    *
    * ```js
-   * isEngineer: function(item) {
-   *     return item.type == 'engineer' || item.manager.type == 'engineer';
+   * isEngineer(item) {
+   *   return item.type == 'engineer' || item.manager.type == 'engineer';
    * }
    * ```
    *
    * Then the `observe` property should be configured as follows:
    *
    * ```html
-   * <template is="dom-repeat" items="{{employees}}"
-   *           filter="isEngineer" observe="type manager.type">
+   * <dom-repeat items="{{employees}}" filter="isEngineer" observe="type manager.type">
    * ```
    *
    * @customElement
@@ -121,26 +129,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    *   items in an array.
    */
 
-  var DomRepeat = function (_domRepeatBase) {
+  var DomRepeat =
+  /*#__PURE__*/
+  function (_domRepeatBase) {
     babelHelpers.inherits(DomRepeat, _domRepeatBase);
     babelHelpers.createClass(DomRepeat, null, [{
-      key: 'is',
-
-
+      key: "is",
       // Not needed to find template; can be removed once the analyzer
       // can find the tag name from customElements.define call
       get: function get() {
         return 'dom-repeat';
       }
     }, {
-      key: 'template',
+      key: "template",
       get: function get() {
         return null;
       }
     }, {
-      key: 'properties',
+      key: "properties",
       get: function get() {
-
         /**
          * Fired whenever DOM is added or removed by this template (by
          * default, rendering occurs lazily).  To force immediate rendering, call
@@ -149,7 +156,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * @event dom-change
          */
         return {
-
           /**
            * An array containing items determining how many instances of the template
            * to stamp and that that each template instance should bind to.
@@ -274,26 +280,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Number,
             value: 20
           },
-
           _targetFrameTime: {
             type: Number,
             computed: '__computeFrameTime(targetFramerate)'
           }
-
         };
       }
     }, {
-      key: 'observers',
+      key: "observers",
       get: function get() {
         return ['__itemsChanged(items.*)'];
       }
     }]);
 
     function DomRepeat() {
+      var _this;
+
       babelHelpers.classCallCheck(this, DomRepeat);
-
-      var _this = babelHelpers.possibleConstructorReturn(this, (DomRepeat.__proto__ || Object.getPrototypeOf(DomRepeat)).call(this));
-
+      _this = babelHelpers.possibleConstructorReturn(this, (DomRepeat.__proto__ || Object.getPrototypeOf(DomRepeat)).call(this));
       _this.__instances = [];
       _this.__limit = Infinity;
       _this.__pool = [];
@@ -309,42 +313,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _this.template = null;
       return _this;
     }
-
     /**
      * @return {void}
      */
 
 
     babelHelpers.createClass(DomRepeat, [{
-      key: 'disconnectedCallback',
+      key: "disconnectedCallback",
       value: function disconnectedCallback() {
-        babelHelpers.get(DomRepeat.prototype.__proto__ || Object.getPrototypeOf(DomRepeat.prototype), 'disconnectedCallback', this).call(this);
+        babelHelpers.get(DomRepeat.prototype.__proto__ || Object.getPrototypeOf(DomRepeat.prototype), "disconnectedCallback", this).call(this);
         this.__isDetached = true;
+
         for (var i = 0; i < this.__instances.length; i++) {
           this.__detachInstance(i);
         }
       }
-
       /**
        * @return {void}
        */
 
     }, {
-      key: 'connectedCallback',
+      key: "connectedCallback",
       value: function connectedCallback() {
-        babelHelpers.get(DomRepeat.prototype.__proto__ || Object.getPrototypeOf(DomRepeat.prototype), 'connectedCallback', this).call(this);
-        this.style.display = 'none';
-        // only perform attachment if the element was previously detached.
+        babelHelpers.get(DomRepeat.prototype.__proto__ || Object.getPrototypeOf(DomRepeat.prototype), "connectedCallback", this).call(this);
+        this.style.display = 'none'; // only perform attachment if the element was previously detached.
+
         if (this.__isDetached) {
           this.__isDetached = false;
           var parent = this.parentNode;
+
           for (var i = 0; i < this.__instances.length; i++) {
             this.__attachInstance(i, parent);
           }
         }
       }
     }, {
-      key: '__ensureTemplatized',
+      key: "__ensureTemplatized",
       value: function __ensureTemplatized() {
         var _this2 = this;
 
@@ -352,21 +356,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         // until ready, since won't have its template content handed back to
         // it until then
         if (!this.__ctor) {
-          var template = this.template = this.querySelector('template');
+          var template = this.template =
+          /** @type {HTMLTemplateElement} */
+          this.querySelector('template');
+
           if (!template) {
             // // Wait until childList changes and template should be there by then
             var observer = new MutationObserver(function () {
               if (_this2.querySelector('template')) {
                 observer.disconnect();
+
                 _this2.__render();
               } else {
                 throw new Error('dom-repeat requires a <template> child');
               }
             });
-            observer.observe(this, { childList: true });
+            observer.observe(this, {
+              childList: true
+            });
             return false;
-          }
-          // Template instance props that should be excluded from forwarding
+          } // Template instance props that should be excluded from forwarding
+
+
           var instanceProps = {};
           instanceProps[this.as] = true;
           instanceProps[this.indexAs] = true;
@@ -375,6 +386,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             mutableData: this.mutableData,
             parentModel: true,
             instanceProps: instanceProps,
+
             /**
              * @this {this}
              * @param {string} prop Property to set
@@ -382,10 +394,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
              */
             forwardHostProp: function forwardHostProp(prop, value) {
               var i$ = this.__instances;
+
               for (var i = 0, inst; i < i$.length && (inst = i$[i]); i++) {
                 inst.forwardHostProp(prop, value);
               }
             },
+
             /**
              * @this {this}
              * @param {Object} inst Instance to notify
@@ -395,19 +409,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             notifyInstanceProp: function notifyInstanceProp(inst, prop, value) {
               if (Polymer.Path.matches(this.as, prop)) {
                 var idx = inst[this.itemsIndexAs];
+
                 if (prop == this.as) {
                   this.items[idx] = value;
                 }
+
                 var path = Polymer.Path.translate(this.as, 'items.' + idx, prop);
                 this.notifyPath(path, value);
               }
             }
           });
         }
+
         return true;
       }
     }, {
-      key: '__getMethodHost',
+      key: "__getMethodHost",
       value: function __getMethodHost() {
         // Technically this should be the owner of the outermost template.
         // In shadow dom, this is always getRootNode().host, but we can
@@ -417,11 +434,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return this.__dataHost._methodHost || this.__dataHost;
       }
     }, {
-      key: '__functionFromPropertyValue',
+      key: "__functionFromPropertyValue",
       value: function __functionFromPropertyValue(functionOrMethodName) {
         if (typeof functionOrMethodName === 'string') {
           var methodName = functionOrMethodName;
+
           var obj = this.__getMethodHost();
+
           return function () {
             return obj[methodName].apply(obj, arguments);
           };
@@ -430,28 +449,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return functionOrMethodName;
       }
     }, {
-      key: '__sortChanged',
+      key: "__sortChanged",
       value: function __sortChanged(sort) {
         this.__sortFn = this.__functionFromPropertyValue(sort);
+
         if (this.items) {
           this.__debounceRender(this.__render);
         }
       }
     }, {
-      key: '__filterChanged',
+      key: "__filterChanged",
       value: function __filterChanged(filter) {
         this.__filterFn = this.__functionFromPropertyValue(filter);
+
         if (this.items) {
           this.__debounceRender(this.__render);
         }
       }
     }, {
-      key: '__computeFrameTime',
+      key: "__computeFrameTime",
       value: function __computeFrameTime(rate) {
         return Math.ceil(1000 / rate);
       }
     }, {
-      key: '__initializeChunking',
+      key: "__initializeChunking",
       value: function __initializeChunking() {
         if (this.initialCount) {
           this.__limit = this.initialCount;
@@ -460,7 +481,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     }, {
-      key: '__tryRenderChunk',
+      key: "__tryRenderChunk",
       value: function __tryRenderChunk() {
         // Debounced so that multiple calls through `_render` between animation
         // frames only queue one new rAF (e.g. array mutation & chunked render)
@@ -469,7 +490,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     }, {
-      key: '__requestRenderChunk',
+      key: "__requestRenderChunk",
       value: function __requestRenderChunk() {
         var _this3 = this;
 
@@ -478,7 +499,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       }
     }, {
-      key: '__renderChunk',
+      key: "__renderChunk",
       value: function __renderChunk() {
         // Simple auto chunkSize throttling algorithm based on feedback loop:
         // measure actual time between frames and scale chunk count by ratio
@@ -488,30 +509,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.__chunkCount = Math.round(this.__chunkCount * ratio) || 1;
         this.__limit += this.__chunkCount;
         this.__lastChunkTime = currChunkTime;
+
         this.__debounceRender(this.__render);
       }
     }, {
-      key: '__observeChanged',
+      key: "__observeChanged",
       value: function __observeChanged() {
         this.__observePaths = this.observe && this.observe.replace('.*', '.').split(' ');
       }
     }, {
-      key: '__itemsChanged',
+      key: "__itemsChanged",
       value: function __itemsChanged(change) {
         if (this.items && !Array.isArray(this.items)) {
           console.warn('dom-repeat expected array for `items`, found', this.items);
-        }
-        // If path was to an item (e.g. 'items.3' or 'items.3.foo'), forward the
+        } // If path was to an item (e.g. 'items.3' or 'items.3.foo'), forward the
         // path to that instance synchronously (returns false for non-item paths)
+
+
         if (!this.__handleItemPath(change.path, change.value)) {
           // Otherwise, the array was reset ('items') or spliced ('items.splices'),
           // so queue a full refresh
           this.__initializeChunking();
+
           this.__debounceRender(this.__render);
         }
       }
     }, {
-      key: '__handleObservedPaths',
+      key: "__handleObservedPaths",
       value: function __handleObservedPaths(path) {
         // Handle cases where path changes should cause a re-sort/filter
         if (this.__sortFn || this.__filterFn) {
@@ -521,6 +545,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           } else if (this.__observePaths) {
             // Otherwise, re-render if the path changed matches an observed path
             var paths = this.__observePaths;
+
             for (var i = 0; i < paths.length; i++) {
               if (path.indexOf(paths[i]) === 0) {
                 this.__debounceRender(this.__render, this.delay);
@@ -529,21 +554,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         }
       }
-
       /**
        * @param {function(this:DomRepeat)} fn Function to debounce.
        * @param {number=} delay Delay in ms to debounce by.
        */
 
     }, {
-      key: '__debounceRender',
+      key: "__debounceRender",
       value: function __debounceRender(fn) {
         var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
         this.__renderDebouncer = Polymer.Debouncer.debounce(this.__renderDebouncer, delay > 0 ? Polymer.Async.timeOut.after(delay) : Polymer.Async.microTask, fn.bind(this));
         Polymer.enqueueDebouncer(this.__renderDebouncer);
       }
-
       /**
        * Forces the element to render its content. Normally rendering is
        * asynchronous to a provoking change. This is done for efficiency so
@@ -554,109 +576,127 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'render',
+      key: "render",
       value: function render() {
         // Queue this repeater, then flush all in order
         this.__debounceRender(this.__render);
+
         Polymer.flush();
       }
     }, {
-      key: '__render',
+      key: "__render",
       value: function __render() {
         if (!this.__ensureTemplatized()) {
           // No template found yet
           return;
         }
-        this.__applyFullRefresh();
-        // Reset the pool
+
+        this.__applyFullRefresh(); // Reset the pool
         // TODO(kschaaf): Reuse pool across turns and nested templates
         // Now that objects/arrays are re-evaluated when set, we can safely
         // reuse pooled instances across turns, however we still need to decide
         // semantics regarding how long to hold, how many to hold, etc.
-        this.__pool.length = 0;
-        // Set rendered item count
-        this._setRenderedItemCount(this.__instances.length);
-        // Notify users
+
+
+        this.__pool.length = 0; // Set rendered item count
+
+        this._setRenderedItemCount(this.__instances.length); // Notify users
+
+
         this.dispatchEvent(new CustomEvent('dom-change', {
           bubbles: true,
           composed: true
-        }));
-        // Check to see if we need to render more items
+        })); // Check to see if we need to render more items
+
         this.__tryRenderChunk();
       }
     }, {
-      key: '__applyFullRefresh',
+      key: "__applyFullRefresh",
       value: function __applyFullRefresh() {
         var _this4 = this;
 
         var items = this.items || [];
         var isntIdxToItemsIdx = new Array(items.length);
+
         for (var i = 0; i < items.length; i++) {
           isntIdxToItemsIdx[i] = i;
-        }
-        // Apply user filter
+        } // Apply user filter
+
+
         if (this.__filterFn) {
           isntIdxToItemsIdx = isntIdxToItemsIdx.filter(function (i, idx, array) {
             return _this4.__filterFn(items[i], idx, array);
           });
-        }
-        // Apply user sort
+        } // Apply user sort
+
+
         if (this.__sortFn) {
           isntIdxToItemsIdx.sort(function (a, b) {
             return _this4.__sortFn(items[a], items[b]);
           });
-        }
-        // items->inst map kept for item path forwarding
+        } // items->inst map kept for item path forwarding
+
+
         var itemsIdxToInstIdx = this.__itemsIdxToInstIdx = {};
-        var instIdx = 0;
-        // Generate instances and assign items
+        var instIdx = 0; // Generate instances and assign items
+
         var limit = Math.min(isntIdxToItemsIdx.length, this.__limit);
+
         for (; instIdx < limit; instIdx++) {
           var inst = this.__instances[instIdx];
           var itemIdx = isntIdxToItemsIdx[instIdx];
           var item = items[itemIdx];
           itemsIdxToInstIdx[itemIdx] = instIdx;
+
           if (inst) {
             inst._setPendingProperty(this.as, item);
+
             inst._setPendingProperty(this.indexAs, instIdx);
+
             inst._setPendingProperty(this.itemsIndexAs, itemIdx);
+
             inst._flushProperties();
           } else {
             this.__insertInstance(item, instIdx, itemIdx);
           }
-        }
-        // Remove any extra instances from previous state
+        } // Remove any extra instances from previous state
+
+
         for (var _i = this.__instances.length - 1; _i >= instIdx; _i--) {
           this.__detachAndRemoveInstance(_i);
         }
       }
     }, {
-      key: '__detachInstance',
+      key: "__detachInstance",
       value: function __detachInstance(idx) {
         var inst = this.__instances[idx];
+
         for (var i = 0; i < inst.children.length; i++) {
           var el = inst.children[i];
           inst.root.appendChild(el);
         }
+
         return inst;
       }
     }, {
-      key: '__attachInstance',
+      key: "__attachInstance",
       value: function __attachInstance(idx, parent) {
         var inst = this.__instances[idx];
         parent.insertBefore(inst.root, this);
       }
     }, {
-      key: '__detachAndRemoveInstance',
+      key: "__detachAndRemoveInstance",
       value: function __detachAndRemoveInstance(idx) {
         var inst = this.__detachInstance(idx);
+
         if (inst) {
           this.__pool.push(inst);
         }
+
         this.__instances.splice(idx, 1);
       }
     }, {
-      key: '__stampInstance',
+      key: "__stampInstance",
       value: function __stampInstance(item, instIdx, itemIdx) {
         var model = {};
         model[this.as] = item;
@@ -665,27 +705,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return new this.__ctor(model);
       }
     }, {
-      key: '__insertInstance',
+      key: "__insertInstance",
       value: function __insertInstance(item, instIdx, itemIdx) {
         var inst = this.__pool.pop();
+
         if (inst) {
           // TODO(kschaaf): If the pool is shared across turns, hostProps
           // need to be re-set to reused instances in addition to item
           inst._setPendingProperty(this.as, item);
+
           inst._setPendingProperty(this.indexAs, instIdx);
+
           inst._setPendingProperty(this.itemsIndexAs, itemIdx);
+
           inst._flushProperties();
         } else {
           inst = this.__stampInstance(item, instIdx, itemIdx);
         }
+
         var beforeRow = this.__instances[instIdx + 1];
         var beforeNode = beforeRow ? beforeRow.children[0] : this;
         this.parentNode.insertBefore(inst.root, beforeNode);
         this.__instances[instIdx] = inst;
         return inst;
-      }
+      } // Implements extension point from Templatize mixin
 
-      // Implements extension point from Templatize mixin
       /**
        * Shows or hides the template instance top level child elements. For
        * text nodes, `textContent` is removed while "hidden" and replaced when
@@ -697,44 +741,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: '_showHideChildren',
+      key: "_showHideChildren",
       value: function _showHideChildren(hidden) {
         for (var i = 0; i < this.__instances.length; i++) {
           this.__instances[i]._showHideChildren(hidden);
         }
-      }
-
-      // Called as a side effect of a host items.<key>.<path> path change,
+      } // Called as a side effect of a host items.<key>.<path> path change,
       // responsible for notifying item.<path> changes to inst for key
 
     }, {
-      key: '__handleItemPath',
+      key: "__handleItemPath",
       value: function __handleItemPath(path, value) {
         var itemsPath = path.slice(6); // 'items.'.length == 6
+
         var dot = itemsPath.indexOf('.');
-        var itemsIdx = dot < 0 ? itemsPath : itemsPath.substring(0, dot);
-        // If path was index into array...
+        var itemsIdx = dot < 0 ? itemsPath : itemsPath.substring(0, dot); // If path was index into array...
+
         if (itemsIdx == parseInt(itemsIdx, 10)) {
-          var itemSubPath = dot < 0 ? '' : itemsPath.substring(dot + 1);
-          // If the path is observed, it will trigger a full refresh
-          this.__handleObservedPaths(itemSubPath);
-          // Note, even if a rull refresh is triggered, always do the path
+          var itemSubPath = dot < 0 ? '' : itemsPath.substring(dot + 1); // If the path is observed, it will trigger a full refresh
+
+          this.__handleObservedPaths(itemSubPath); // Note, even if a rull refresh is triggered, always do the path
           // notification because unless mutableData is used for dom-repeat
           // and all elements in the instance subtree, a full refresh may
           // not trigger the proper update.
+
+
           var instIdx = this.__itemsIdxToInstIdx[itemsIdx];
           var inst = this.__instances[instIdx];
+
           if (inst) {
-            var itemPath = this.as + (itemSubPath ? '.' + itemSubPath : '');
-            // This is effectively `notifyPath`, but avoids some of the overhead
+            var itemPath = this.as + (itemSubPath ? '.' + itemSubPath : ''); // This is effectively `notifyPath`, but avoids some of the overhead
             // of the public API
+
             inst._setPendingPropertyOrPath(itemPath, value, false, true);
+
             inst._flushProperties();
           }
+
           return true;
         }
       }
-
       /**
        * Returns the item associated with a given element stamped by
        * this `dom-repeat`.
@@ -748,12 +794,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'itemForElement',
+      key: "itemForElement",
       value: function itemForElement(el) {
         var instance = this.modelForElement(el);
         return instance && instance[this.as];
       }
-
       /**
        * Returns the inst index for a given element stamped by this `dom-repeat`.
        * If `sort` is provided, the index will reflect the sorted order (rather
@@ -765,12 +810,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'indexForElement',
+      key: "indexForElement",
       value: function indexForElement(el) {
         var instance = this.modelForElement(el);
         return instance && instance[this.indexAs];
       }
-
       /**
        * Returns the template "model" associated with a given element, which
        * serves as the binding scope for the template instance the element is
@@ -790,7 +834,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
 
     }, {
-      key: 'modelForElement',
+      key: "modelForElement",
       value: function modelForElement(el) {
         return Polymer.Templatize.modelForElement(this.template, el);
       }
@@ -799,6 +843,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }(domRepeatBase);
 
   customElements.define(DomRepeat.is, DomRepeat);
-
   Polymer.DomRepeat = DomRepeat;
 })();</script>

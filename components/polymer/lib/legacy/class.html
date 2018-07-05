@@ -7,10 +7,7 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 --><link rel="import" href="legacy-element-mixin.html">
-<script>
-
-(function () {
-
+<script>(function () {
   'use strict';
 
   var metaProps = {
@@ -24,7 +21,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // meta objects
     behaviors: true
   };
-
   /**
    * Applies a "legacy" behavior or array of behaviors to the provided class.
    *
@@ -40,32 +36,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @memberof Polymer
    * @suppress {invalidCasts, checkTypes}
    */
+
   function mixinBehaviors(behaviors, klass) {
     if (!behaviors) {
-      klass = /** @type {HTMLElement} */klass; // eslint-disable-line no-self-assign
+      klass =
+      /** @type {HTMLElement} */
+      klass; // eslint-disable-line no-self-assign
+
       return klass;
-    }
-    // NOTE: ensure the behavior is extending a class with
+    } // NOTE: ensure the behavior is extending a class with
     // legacy element api. This is necessary since behaviors expect to be able
     // to access 1.x legacy api.
+
+
     klass = Polymer.LegacyElementMixin(klass);
+
     if (!Array.isArray(behaviors)) {
       behaviors = [behaviors];
     }
-    var superBehaviors = klass.prototype.behaviors;
-    // get flattened, deduped list of behaviors *not* already on super class
-    behaviors = flattenBehaviors(behaviors, null, superBehaviors);
-    // mixin new behaviors
+
+    var superBehaviors = klass.prototype.behaviors; // get flattened, deduped list of behaviors *not* already on super class
+
+    behaviors = flattenBehaviors(behaviors, null, superBehaviors); // mixin new behaviors
+
     klass = _mixinBehaviors(behaviors, klass);
+
     if (superBehaviors) {
       behaviors = superBehaviors.concat(behaviors);
-    }
-    // Set behaviors on prototype for BC...
+    } // Set behaviors on prototype for BC...
+
+
     klass.prototype.behaviors = behaviors;
     return klass;
-  }
-
-  // NOTE:
+  } // NOTE:
   // 1.x
   // Behaviors were mixed in *in reverse order* and de-duped on the fly.
   // The rule was that behavior properties were copied onto the element
@@ -95,26 +98,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // If lifecycle is called (super then me), order is
   // (1) C.created, (2) A.created, (3) B.created, (4) element.created
   // (again same as 1.x)
+
+
   function _mixinBehaviors(behaviors, klass) {
     for (var i = 0; i < behaviors.length; i++) {
       var b = behaviors[i];
+
       if (b) {
         klass = Array.isArray(b) ? _mixinBehaviors(b, klass) : GenerateClassFromInfo(b, klass);
       }
     }
+
     return klass;
   }
-
   /**
    * @param {Array} behaviors List of behaviors to flatten.
    * @param {Array=} list Target list to flatten behaviors into.
    * @param {Array=} exclude List of behaviors to exclude from the list.
    * @return {!Array} Returns the list of flattened behaviors.
    */
+
+
   function flattenBehaviors(behaviors, list, exclude) {
     list = list || [];
+
     for (var i = behaviors.length - 1; i >= 0; i--) {
       var b = behaviors[i];
+
       if (b) {
         if (Array.isArray(b)) {
           flattenBehaviors(b, list);
@@ -128,9 +138,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.warn('behavior is null, check for missing or 404 import');
       }
     }
+
     return list;
   }
-
   /**
    * @param {!PolymerInit} info Polymer info object
    * @param {function(new:HTMLElement)} Base base class to extend with info object
@@ -138,8 +148,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @suppress {checkTypes}
    * @private
    */
+
+
   function GenerateClassFromInfo(info, Base) {
-    var PolymerGenerated = function (_Base) {
+    var PolymerGenerated =
+    /*#__PURE__*/
+    function (_Base) {
       babelHelpers.inherits(PolymerGenerated, _Base);
 
       function PolymerGenerated() {
@@ -148,27 +162,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       babelHelpers.createClass(PolymerGenerated, [{
-        key: 'created',
-
+        key: "created",
 
         /**
          * @return {void}
          */
         value: function created() {
-          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), 'created', this).call(this);
+          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), "created", this).call(this);
+
           if (info.created) {
             info.created.call(this);
           }
         }
-
         /**
          * @return {void}
          */
 
       }, {
-        key: '_registered',
+        key: "_registered",
         value: function _registered() {
-          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), '_registered', this).call(this);
+          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), "_registered", this).call(this);
           /* NOTE: `beforeRegister` is called here for bc, but the behavior
            is different than in 1.x. In 1.0, the method was called *after*
            mixing prototypes together but *before* processing of meta-objects.
@@ -176,86 +189,87 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
            in `beforeRegister` or `registered`. It is no longer possible to set
            `is` in `beforeRegister` as you could in 1.x.
           */
+
           if (info.beforeRegister) {
             info.beforeRegister.call(Object.getPrototypeOf(this));
           }
+
           if (info.registered) {
             info.registered.call(Object.getPrototypeOf(this));
           }
         }
-
         /**
          * @return {void}
          */
 
       }, {
-        key: '_applyListeners',
+        key: "_applyListeners",
         value: function _applyListeners() {
-          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), '_applyListeners', this).call(this);
+          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), "_applyListeners", this).call(this);
+
           if (info.listeners) {
             for (var l in info.listeners) {
               this._addMethodEventListenerToNode(this, l, info.listeners[l]);
             }
           }
-        }
-
-        // note: exception to "super then me" rule;
+        } // note: exception to "super then me" rule;
         // do work before calling super so that super attributes
         // only apply if not already set.
+
         /**
          * @return {void}
          */
 
       }, {
-        key: '_ensureAttributes',
+        key: "_ensureAttributes",
         value: function _ensureAttributes() {
           if (info.hostAttributes) {
             for (var a in info.hostAttributes) {
               this._ensureAttribute(a, info.hostAttributes[a]);
             }
           }
-          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), '_ensureAttributes', this).call(this);
-        }
 
+          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), "_ensureAttributes", this).call(this);
+        }
         /**
          * @return {void}
          */
 
       }, {
-        key: 'ready',
+        key: "ready",
         value: function ready() {
-          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), 'ready', this).call(this);
+          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), "ready", this).call(this);
+
           if (info.ready) {
             info.ready.call(this);
           }
         }
-
         /**
          * @return {void}
          */
 
       }, {
-        key: 'attached',
+        key: "attached",
         value: function attached() {
-          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), 'attached', this).call(this);
+          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), "attached", this).call(this);
+
           if (info.attached) {
             info.attached.call(this);
           }
         }
-
         /**
          * @return {void}
          */
 
       }, {
-        key: 'detached',
+        key: "detached",
         value: function detached() {
-          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), 'detached', this).call(this);
+          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), "detached", this).call(this);
+
           if (info.detached) {
             info.detached.call(this);
           }
         }
-
         /**
          * Implements native Custom Elements `attributeChangedCallback` to
          * set an attribute value to a property via `_attributeToProperty`.
@@ -267,39 +281,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          */
 
       }, {
-        key: 'attributeChanged',
+        key: "attributeChanged",
         value: function attributeChanged(name, old, value) {
-          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), 'attributeChanged', this).call(this, name, old, value);
+          babelHelpers.get(PolymerGenerated.prototype.__proto__ || Object.getPrototypeOf(PolymerGenerated.prototype), "attributeChanged", this).call(this, name, old, value);
+
           if (info.attributeChanged) {
             info.attributeChanged.call(this, name, old, value);
           }
         }
       }], [{
-        key: 'properties',
+        key: "properties",
         get: function get() {
           return info.properties;
         }
       }, {
-        key: 'observers',
+        key: "observers",
         get: function get() {
           return info.observers;
         }
-
         /**
          * @return {HTMLTemplateElement} template for this class
          */
 
       }, {
-        key: 'template',
+        key: "template",
         get: function get() {
           // get template first from any imperative set in `info._template`
-          return info._template ||
-          // next look in dom-module associated with this element's is.
-          Polymer.DomModule && Polymer.DomModule.import(this.is, 'template') ||
-          // next look for superclass template (note: use superclass symbol
+          return info._template || // next look in dom-module associated with this element's is.
+          Polymer.DomModule && Polymer.DomModule.import(this.is, 'template') || // next look for superclass template (note: use superclass symbol
           // to ensure correct `this.is`)
-          Base.template ||
-          // finally fall back to `_template` in element's prototype.
+          Base.template || // finally fall back to `_template` in element's prototype.
           this.prototype._template || null;
         }
       }]);
@@ -313,6 +324,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       // `super.ready` must be called and is not included in the user fn.
       if (!(p in metaProps)) {
         var pd = Object.getOwnPropertyDescriptor(info, p);
+
         if (pd) {
           Object.defineProperty(PolymerGenerated.prototype, p, pd);
         }
@@ -321,7 +333,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     return PolymerGenerated;
   }
-
   /**
    * Generates a class that extends `Polymer.LegacyElement` based on the
    * provided info object.  Metadata objects on the `info` object
@@ -390,14 +401,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @return {function(new:HTMLElement)} Generated class
    * @memberof Polymer
    */
+
+
   Polymer.Class = function (info) {
     if (!info) {
       console.warn('Polymer.Class requires `info` argument');
     }
-    var klass = GenerateClassFromInfo(info, info.behaviors ?
-    // note: mixinBehaviors ensures `LegacyElementMixin`.
-    mixinBehaviors(info.behaviors, HTMLElement) : Polymer.LegacyElementMixin(HTMLElement));
-    // decorate klass with registration info
+
+    var klass = GenerateClassFromInfo(info, info.behaviors ? // note: mixinBehaviors ensures `LegacyElementMixin`.
+    mixinBehaviors(info.behaviors, HTMLElement) : Polymer.LegacyElementMixin(HTMLElement)); // decorate klass with registration info
+
     klass.is = info.is;
     return klass;
   };

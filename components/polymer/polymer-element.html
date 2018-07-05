@@ -9,10 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 --><link rel="import" href="lib/mixins/element-mixin.html">
 <!-- import html-tag to export html -->
 <link rel="import" href="lib/utils/html-tag.html">
-<script>
-(function () {
+<script>(function () {
   'use strict';
-
   /**
    * Base class that provides the core API for Polymer's meta-programming
    * features including template stamping, data-binding, attribute deserialization,
@@ -36,8 +34,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
    * @implements {Polymer_ElementMixin}
    * @extends {HTMLElement}
    */
-  Polymer.Element = Element;
 
-  // NOTE: this is here for modulizer to export `html` for the module version of this file
+  Polymer.Element = Element; // NOTE: this is here for modulizer to export `html` for the module version of this file
+
   Polymer.html = Polymer.html;
 })();</script>
